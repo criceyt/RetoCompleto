@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vista.FXMLLoginController">
+    <children>
+        
+        <ImageView fitHeight="600" fitWidth="900" pickOnBounds="true" preserveRatio="false">
+            <image>
+                <Image url="@/vista/fondo.jpg" /> 
+            </image>
+        </ImageView>
+
+        <HBox layoutX="0" layoutY="0" prefHeight="600" prefWidth="800">
+           
+            <VBox fx:id="loginPane" alignment="CENTER" prefHeight="600.0" prefWidth="450.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;">
+                <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Iniciar Sesión" />
+                <TextField fx:id="usernameField" promptText="Usuario" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <PasswordField fx:id="passwordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <Button fx:id="loginButton" onAction="#handleLogin" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 200;" text="Iniciar Sesión" />
+                <Text fill="white" text="¿No tienes cuenta? Regístrate aquí." />
+                <Button fx:id="registerButton" onAction="#showRegister" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 200;" text="Registrarse" />
+            </VBox>
+
+            <VBox fx:id="registerPane" alignment="CENTER" prefHeight="600.0" prefWidth="450.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;" visible="false">
+                <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Regístrate" />
+                
+                <TextField fx:id="firstNameField" promptText="Nombre" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <TextField fx:id="lastNameField" promptText="Apellido" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <TextField fx:id="emailField" promptText="Correo Electrónico" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <PasswordField fx:id="registerPasswordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
+                <Button onAction="#handleRegister" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 200;" text="Registrarse" />
+                <Text fill="white" text="¿Ya tienes cuenta? Inicia sesión aquí." />
+                <Button onAction="#showLogin" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 200;" text="Iniciar Sesión" />
+            </VBox>
+        </HBox>
+    </children>
+</AnchorPane>

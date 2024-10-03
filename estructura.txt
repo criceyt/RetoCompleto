@@ -1,0 +1,26 @@
+proyecto-signup-signin/
+│
+├── src/
+│   ├── controlador/            # Capa Controlador (Lógica de Negocio)
+│   │   └── UserController.java # Maneja la lógica de sign up / sign in
+│   │
+│   ├── dao/                    # Capa DAO (Acceso a Datos)
+│   │   ├── FactoriaDAO.java     # Fábrica para crear DAOs (singleton, threadsafe)
+│   │   ├── UserDAO.java         # Interfaz del DAO (define operaciones de datos)
+│   │   ├── UserDAOImpl.java     # Implementación del DAO con conexión a Odoo
+│   │   └── ConnectionManager.java # Maneja conexiones (posible uso de hilos/sockets)
+│   │
+│   ├── modelo/                 # Capa Modelo (DTOs)
+│   │   └── User.java           # Modelo que representa al usuario (DTO)
+│   │
+│   ├── vista/                  # Capa Vista (Interfaz de Usuario con JavaFX)
+│   │   ├── SignUpSignInController.java # Controlador de JavaFX que maneja eventos
+│   │   └── SignUpSignInView.fxml       # Archivo FXML con la interfaz gráfica
+│   │
+│   └── main/                   # Punto de entrada a la aplicación
+│       └── MainApp.java         # Clase principal que inicializa la app JavaFX
+│
+├── lib/                        # Librerías externas (ejemplo: XML-RPC, JavaFX, etc.)
+│   └── xmlrpc.jar              # Librería para manejar la conexión con Odoo
+│
+└── README.md                   # Información sobre el proyecto
