@@ -10,18 +10,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600" prefWidth="900" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vista.FXMLLoginController">
+<AnchorPane prefHeight="600" prefWidth="800" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.FXMLLoginController">
     <children>
         
-        <ImageView fitHeight="600" fitWidth="900" pickOnBounds="true" preserveRatio="false">
+        <ImageView fitHeight="600" fitWidth="800" pickOnBounds="true" preserveRatio="false">
             <image>
-                <Image url="@/vista/fondo.jpg" /> 
+                <Image url="@/ui/fondo.jpg" /> 
             </image>
         </ImageView>
 
         <HBox layoutX="0" layoutY="0" prefHeight="600" prefWidth="800">
            
-            <VBox fx:id="loginPane" alignment="CENTER" prefHeight="600.0" prefWidth="450.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;">
+            <VBox fx:id="loginPane" alignment="CENTER" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;">
                 <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Iniciar Sesión" />
                 <TextField fx:id="usernameField" promptText="Usuario" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
                 <PasswordField fx:id="passwordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
@@ -30,7 +30,7 @@
                 <Button fx:id="registerButton" onAction="#showRegister" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-pref-width: 200;" text="Registrarse" />
             </VBox>
 
-            <VBox fx:id="registerPane" alignment="CENTER" prefHeight="600.0" prefWidth="450.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;" visible="false">
+            <VBox fx:id="registerPane" alignment="CENTER" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20; -fx-background-radius: 20;" visible="false">
                 <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Regístrate" />
                 
                 <TextField fx:id="firstNameField" promptText="Nombre" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" />
