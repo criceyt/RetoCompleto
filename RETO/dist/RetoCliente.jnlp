@@ -8,8 +8,9 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="RetoCliente.jar" size="125668" download="eager" />
-    <jar href="lib\Library.jar" size="2610" download="eager" />
+    <jar href="RetoCliente.jar" size="126242" download="eager" />
+    <jar href="lib\Library.jar" size="2668" download="eager" />
+    <jar href="lib\postgresql-42.6.0.jar" size="1081604" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="RetoCliente" >
     <param name="requiredFXVersion" value="8.0+"/>

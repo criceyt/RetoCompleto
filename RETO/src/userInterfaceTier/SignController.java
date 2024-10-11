@@ -55,10 +55,8 @@ public class SignController {
     @FXML
     private PasswordField confirmPasswordField;
 
-    // Dependencia al ErrorHandler
     private ErrorHandler errorHandler = new ErrorHandler();
 
-    // Constructor sin parámetros
     public SignController() {
     }
 
@@ -68,7 +66,6 @@ public class SignController {
         String password = passwordField.getText();
 
         try {
-            // Autenticar usuario
             if (errorHandler.autenticar(email, password)) {
                 messageLabel.setText("¡Inicio de sesión exitoso!");
                 System.out.println("Usuario autenticado: " + email);
@@ -90,77 +87,46 @@ public class SignController {
 
         List<String> errores = new ArrayList<>();
 
-        // Verificar si todos los campos están vacíos
-        if (nombreyApellidos.isEmpty() && direccion.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && ciudad.isEmpty() && codigoPostalTexto.isEmpty()) {
-            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
+        if (nombreyApellidos.isEmpty() || direccion.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || ciudad.isEmpty() || codigoPostalTexto.isEmpty()) {
+            errorHandler.handleGeneralException(new Exception("Por favor, completa todos los campos."), messageLabel);
             return;
         }
 
-        // Validar campos vacíos
-        if (nombreyApellidos.isEmpty()) {
-            errores.add("El nombre completo no puede estar vacío.");
-        }
-        if (codigoPostalTexto.isEmpty()) {
-            errores.add("El código postal no puede estar vacío.");
-        }
-        if (ciudad.isEmpty()) {
-            errores.add("La ciudad no puede estar vacía.");
-        }
-        if (direccion.isEmpty()) {
-            errores.add("La dirección no puede estar vacía.");
-        }
-        if (email.isEmpty()) {
-            errores.add("El correo electrónico no puede estar vacío.");
-        }
-        if (password.isEmpty()) {
-            errores.add("La contraseña no puede estar vacía.");
-        }
-        if (confirmPassword.isEmpty()) {
-            errores.add("Confirma tu contraseña.");
-        }
-
-        // Validar formato de correo
         if (!esCorreoValido(email)) {
             errores.add("El correo electrónico no tiene un formato válido.");
         }
 
-        // Validar contraseñas coincidentes
         if (!password.equals(confirmPassword)) {
             errores.add("Las contraseñas no coinciden.");
         }
 
-        // Validar fortaleza de la contraseña
         if (!esContraseñaFuerte(password)) {
             errores.add("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula y un número.");
         }
 
-        // Validar código postal
-        if (!codigoPostalTexto.matches("\\d{5}")) { // Verifica que sean 5 dígitos
+        if (!codigoPostalTexto.matches("\\d{5}")) {
             errores.add("El código postal debe tener exactamente 5 números.");
         }
 
-        // Si hay errores, mostrar la alerta con todos los errores
         if (!errores.isEmpty()) {
             String mensajeErrores = String.join("\n", errores);
             errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
-            return; // Salimos del método si hay errores
+            return;
         }
 
-        // Registrar nuevo usuario usando el ErrorHandler
         try {
-            int codigoPostal = Integer.parseInt(codigoPostalTexto);
-            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword);
+            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostalTexto, direccion, email, password, confirmPassword);
             messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
-            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal);
-            Signable a = ClientFactory.getSignable();
-            a.singUp(usuario);
+           Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
+
+            Signable signable = ClientFactory.getSignable();
+            signable.singUp(usuario);
             limpiarCamposRegistro();
         } catch (Exception e) {
-            errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
+            errorHandler.handleGeneralException(e, messageLabel);
         }
     }
 
-    // Método para limpiar los campos después del registro
     private void limpiarCamposRegistro() {
         nombreyApellidoField.clear();
         ciudadField.clear();
@@ -169,6 +135,17 @@ public class SignController {
         emailField.clear();
         registerPasswordField.clear();
         confirmPasswordField.clear();
+    }
+
+    private boolean esCorreoValido(String email) {
+        return email.contains("@") && email.contains(".");
+    }
+
+    private boolean esContraseñaFuerte(String password) {
+        return password.length() >= 8
+                && password.matches(".*[A-Z].*")
+                && password.matches(".*[a-z].*")
+                && password.matches(".*[0-9].*");
     }
 
     @FXML
@@ -209,18 +186,5 @@ public class SignController {
         messageTransition.setFromX(0);
         messageTransition.setToX(loginPane.getWidth());
         messageTransition.play();
-    }
-
-    // Método para validar el formato del correo (simple)
-    private boolean esCorreoValido(String email) {
-        return email.contains("@") && email.contains(".");
-    }
-
-    // Método para validar la fortaleza de la contraseña (ejemplo básico)
-    private boolean esContraseñaFuerte(String password) {
-        return password.length() >= 8
-                && password.matches(".*[A-Z].*")
-                && password.matches(".*[a-z].*")
-                && password.matches(".*[0-9].*");
     }
 }
