@@ -3,6 +3,8 @@ package userInterfaceTier;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -115,13 +117,21 @@ public class SignController {
         }
 
         try {
-            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostalTexto, direccion, email, password, confirmPassword);
-            messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
-           Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
+            // Crea el objeto usuario
+            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
 
             Signable signable = ClientFactory.getSignable();
-            signable.singUp(usuario);
-            limpiarCamposRegistro();
+            boolean registrado = signable.singUp(usuario); // Almacena el resultado de la operación
+
+            // Muestra alerta según el resultado
+            if (registrado) {
+                showAlert("Registro exitoso", "El usuario ha sido registrado correctamente.");
+                messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
+                limpiarCamposRegistro();
+            } else {
+                showAlert("Error en el registro", "No se pudo registrar al usuario. Puede que ya exista.");
+            }
+
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
         }
@@ -146,6 +156,14 @@ public class SignController {
                 && password.matches(".*[A-Z].*")
                 && password.matches(".*[a-z].*")
                 && password.matches(".*[0-9].*");
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(AlertType.INFORMATION); // Cambiar a AlertType.ERROR si es necesario
+        alert.setTitle(title);
+        alert.setHeaderText(null); // Puedes establecer un encabezado si lo deseas
+        alert.setContentText(message);
+        alert.showAndWait(); // Muestra la alerta y espera a que el usuario la cierre
     }
 
     @FXML

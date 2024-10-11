@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dataAccessTier;
 
+import java.sql.Connection;
 import libreria.Signable;
 
 /**
@@ -12,19 +8,15 @@ import libreria.Signable;
  * @author crice
  */
 public class FactoryDao {
+    private ConnectionPool connectionPool; // Cambia a ConnectionPool
 
-    private String url;
-    private String user;
-    private String password;
-
-    public FactoryDao(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
+    public FactoryDao(ConnectionPool pool) {
+        this.connectionPool = pool; // Asigna el ConnectionPool recibido
     }
 
     // Método para crear una nueva instancia de Dao
     public Signable createDao() {
-        return new Dao(url, user, password);
+        Connection connection = connectionPool.getConnection(); // Obtener una conexión del pool
+        return new Dao(connection); // Pasar la conexión al Dao
     }
 }

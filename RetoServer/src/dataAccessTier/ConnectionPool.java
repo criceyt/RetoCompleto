@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dataAccessTier;
 
 import java.sql.Connection;
@@ -11,45 +6,37 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author 2dam
- */
 public class ConnectionPool {
-    private List<Connection> connectionPool;
-    private String url;
-    private String user;
-    private String password;
+    private List<Connection> availableConnections = new ArrayList<>();
+    private List<Connection> usedConnections = new ArrayList<>();
     private int maxConnections;
 
-    public ConnectionPool(String url, String user, String password, int maxConnections) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
+    public ConnectionPool(String dbUrl, String dbUser, String dbPassword, int maxConnections) {
         this.maxConnections = maxConnections;
-        connectionPool = new ArrayList<>(maxConnections);
-        createConnections();
+        for (int i = 0; i < maxConnections; i++) {
+            availableConnections.add(createConnection(dbUrl, dbUser, dbPassword));
+        }
     }
 
-    private void createConnections() {
-        for (int i = 0; i < maxConnections; i++) {
-            try {
-                Connection connection = DriverManager.getConnection(url, user, password);
-                connectionPool.add(connection);
-            } catch (SQLException e) {
-                e.printStackTrace(); // Manejar el error según sea necesario
-            }
+    private Connection createConnection(String dbUrl, String dbUser, String dbPassword) {
+        try {
+            return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error creando conexión a la base de datos", e);
         }
     }
 
     public synchronized Connection getConnection() {
-        if (!connectionPool.isEmpty()) {
-            return connectionPool.remove(0);
+        if (availableConnections.isEmpty()) {
+            throw new RuntimeException("No hay conexiones disponibles");
         }
-        return null; // O lanzar una excepción
+        Connection connection = availableConnections.remove(availableConnections.size() - 1);
+        usedConnections.add(connection);
+        return connection;
     }
 
     public synchronized void releaseConnection(Connection connection) {
-        connectionPool.add(connection);
+        usedConnections.remove(connection);
+        availableConnections.add(connection);
     }
 }

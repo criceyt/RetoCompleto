@@ -10,6 +10,6 @@ public interface Signable {
 
     public boolean login(String username, String password);
 
-    public void singUp(Usuario usuario);
+    boolean singUp(Usuario usuario);
 
 }

@@ -17,8 +17,8 @@ public class Client implements Signable {
     public String iniciar(Usuario usuario, String action) {
         String response = "";
         try (Socket socket = new Socket(HOST, PUERTO);
-             ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream())) {
+                ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream())) {
 
             System.out.println("Conexión realizada con el servidor");
 
@@ -37,16 +37,18 @@ public class Client implements Signable {
     }
 
     @Override
-    public void singUp(Usuario usuario) {
+    public boolean singUp(Usuario usuario) {
+        System.out.println("Iniciando registro para: " + usuario.getEmail());
         String response = iniciar(usuario, "register");
         System.out.println(response); // Muestra la respuesta del servidor
+        return response.equals("Registro exitoso");
     }
 
     @Override
     public boolean login(String username, String password) {
-        Usuario usuario = new Usuario(username, password, null, null, null, null); 
+        Usuario usuario = new Usuario(username, password, null, null, null, null);
         String response = iniciar(usuario, "login");
         System.out.println(response);
-        return response.equals("Login exitoso"); 
+        return response.equals("Login exitoso");
     }
 }

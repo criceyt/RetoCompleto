@@ -2,15 +2,19 @@ package libreria;
 
 import java.io.Serializable;
 
-public class Usuario implements Serializable {
-    private String email;
+public class Usuario implements Serializable{
+    private static final long serialVersionUID = 1L;
+
+    private String email; // Este campo se usará como login
     private String password;
     private String nombreyApellidos;
     private String direccion;
     private String ciudad;
-    private String codigoPostal; 
+    private String codigoPostal;
+    private String name; // Nombre completo para Odoo
+    private int companyId; // company_id para Odoo
+    private boolean active; // Indica si el usuario está activo
 
-    // Constructor
     public Usuario(String email, String password, String nombreyApellidos, String direccion, String ciudad, String codigoPostal) {
         this.email = email;
         this.password = password;
@@ -18,6 +22,9 @@ public class Usuario implements Serializable {
         this.direccion = direccion;
         this.ciudad = ciudad;
         this.codigoPostal = codigoPostal;
+        this.name = nombreyApellidos; // Usar el nombre y apellidos como name
+        this.companyId = 1; // Valor por defecto según tu implementación
+        this.active = true; // Por defecto, el usuario está activo
     }
 
     // Getters y Setters
@@ -67,5 +74,29 @@ public class Usuario implements Serializable {
 
     public void setCodigoPostal(String codigoPostal) {
         this.codigoPostal = codigoPostal;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(int companyId) {
+        this.companyId = companyId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

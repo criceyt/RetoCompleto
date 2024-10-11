@@ -25,30 +25,45 @@ public class Server {
                 executorService.submit(new ClientHandler(clientSocket, connectionPool));
             }
         } catch (IOException e) {
+            System.err.println("Error en el servidor: " + e.getMessage());
             e.printStackTrace(); // Manejar el error según sea necesario
         }
     }
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        String dbUrl;
-        String dbUser;
-        String dbPassword;
-        int maxConnections;
 
-        // Cargar propiedades desde el archivo
-        try (InputStream input = new FileInputStream("config.properties")) {
+        // Cargar el archivo de propiedades desde el classpath
+        try (InputStream input = Server.class.getClassLoader().getResourceAsStream("dataAccessTier/config.properties")) {
+            if (input == null) {
+                System.out.println("Lo siento, no se encontró el archivo config.properties en el classpath.");
+                return;
+            }
             properties.load(input);
-            dbUrl = properties.getProperty("db.url");
-            dbUser = properties.getProperty("db.user");
-            dbPassword = properties.getProperty("db.password");
-            maxConnections = Integer.parseInt(properties.getProperty("max.connections"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return; // Termina si no se pueden cargar las propiedades
-        }
 
-        Server server = new Server(dbUrl, dbUser, dbPassword, maxConnections);
-        server.start();
+            String dbUrl = properties.getProperty("db.url");
+            String dbUser = properties.getProperty("db.user");
+            String dbPassword = properties.getProperty("db.password");
+            int maxConnections = Integer.parseInt(properties.getProperty("max.connections"));
+
+            // Usar estos valores en tu aplicación
+            System.out.println("URL de la base de datos: " + dbUrl);
+            System.out.println("Usuario de la base de datos: " + dbUser);
+            System.out.println("Máximo de conexiones: " + maxConnections);
+
+            // Iniciar el servidor con los parámetros obtenidos
+            Server server = new Server(dbUrl, dbUser, dbPassword, maxConnections);
+            server.start(); // Iniciar el servidor
+
+        } catch (FileNotFoundException e) {
+            System.out.println("El archivo config.properties no fue encontrado: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error al cargar el archivo config.properties: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Error al parsear el número de conexiones: " + e.getMessage());
+        } catch (Exception ex) {
+            System.err.println("Error inesperado: " + ex.getMessage());
+            ex.printStackTrace(); // Para cualquier otro error
+        }
     }
 }
