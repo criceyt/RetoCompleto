@@ -36,8 +36,10 @@
             <!-- Panel de registro -->
             <VBox fx:id="registerPane" alignment="CENTER" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20;" visible="false" HBox.hgrow="ALWAYS">
                 <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Regístrate" />
-                <TextField fx:id="nombreyApellido" promptText="Nombre y Apellido" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <TextField fx:id="direccion" promptText="Direccion" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+                <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+                <TextField fx:id="ciudadField" promptText="Ciudad" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+                <TextField fx:id="codigoPostalField" promptText="Codigo Postal" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+                <TextField fx:id="direccionField" promptText="Direccion" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
                 <TextField fx:id="emailField" promptText="Correo Electrónico" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
                 <PasswordField fx:id="registerPasswordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
                 <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>

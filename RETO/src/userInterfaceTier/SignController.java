@@ -8,11 +8,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import validations.ErrorHandler; 
+import validations.ErrorHandler;
+import libreria.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
-import libreria.Usuario;
 
 public class SignController {
 
@@ -35,16 +35,19 @@ public class SignController {
     private PasswordField passwordField;
 
     @FXML
-    private TextField registerUsernameField;
+    private TextField nombreyApellidoField;
 
     @FXML
     private PasswordField registerPasswordField;
 
     @FXML
-    private TextField firstNameField;
+    private TextField ciudadField;
 
     @FXML
-    private TextField lastNameField;
+    private TextField codigoPostalField;
+
+    @FXML
+    private TextField direccionField;
 
     @FXML
     private TextField emailField;
@@ -57,7 +60,6 @@ public class SignController {
 
     // Constructor sin parámetros
     public SignController() {
-  
     }
 
     @FXML
@@ -72,14 +74,16 @@ public class SignController {
                 System.out.println("Usuario autenticado: " + email);
             }
         } catch (Exception e) {
-            errorHandler.handleGeneralException(e); 
+            errorHandler.handleGeneralException(e, messageLabel);
         }
     }
 
     @FXML
     private void handleRegister() {
-        String nombre = firstNameField.getText();
-        String apellido = lastNameField.getText();
+        String nombreyApellidos = nombreyApellidoField.getText();
+        String direccion = direccionField.getText();
+        String ciudad = ciudadField.getText();
+        String codigoPostalTexto = codigoPostalField.getText().trim();
         String email = emailField.getText();
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
@@ -87,17 +91,23 @@ public class SignController {
         List<String> errores = new ArrayList<>();
 
         // Verificar si todos los campos están vacíos
-        if (nombre.isEmpty() && apellido.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty()) {
-            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."));
-            return; 
+        if (nombreyApellidos.isEmpty() && direccion.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && ciudad.isEmpty() && codigoPostalTexto.isEmpty()) {
+            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
+            return;
         }
 
         // Validar campos vacíos
-        if (nombre.isEmpty()) {
-            errores.add("El nombre no puede estar vacío.");
+        if (nombreyApellidos.isEmpty()) {
+            errores.add("El nombre completo no puede estar vacío.");
         }
-        if (apellido.isEmpty()) {
-            errores.add("El apellido no puede estar vacío.");
+        if (codigoPostalTexto.isEmpty()) {
+            errores.add("El código postal no puede estar vacío.");
+        }
+        if (ciudad.isEmpty()) {
+            errores.add("La ciudad no puede estar vacía.");
+        }
+        if (direccion.isEmpty()) {
+            errores.add("La dirección no puede estar vacía.");
         }
         if (email.isEmpty()) {
             errores.add("El correo electrónico no puede estar vacío.");
@@ -121,33 +131,41 @@ public class SignController {
 
         // Validar fortaleza de la contraseña
         if (!esContraseñaFuerte(password)) {
-            errores.add("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula, y un número.");
+            errores.add("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula y un número.");
+        }
+
+        // Validar código postal
+        if (!codigoPostalTexto.matches("\\d{5}")) { // Verifica que sean 5 dígitos
+            errores.add("El código postal debe tener exactamente 5 números.");
         }
 
         // Si hay errores, mostrar la alerta con todos los errores
         if (!errores.isEmpty()) {
             String mensajeErrores = String.join("\n", errores);
-            errorHandler.handleGeneralException(new Exception(mensajeErrores));
+            errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
             return; // Salimos del método si hay errores
         }
 
         // Registrar nuevo usuario usando el ErrorHandler
         try {
-            errorHandler.validarYRegistrar(nombre, apellido, email, password, confirmPassword);
+            int codigoPostal = Integer.parseInt(codigoPostalTexto);
+            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword);
             messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
-            Usuario usuario = new Usuario(nombre, apellido, email, password);
+            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal);
             Signable a = ClientFactory.getSignable();
             a.singUp(usuario);
             limpiarCamposRegistro();
         } catch (Exception e) {
-            errorHandler.handleGeneralException(e); // Maneja todos los errores
+            errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
         }
     }
 
     // Método para limpiar los campos después del registro
     private void limpiarCamposRegistro() {
-        firstNameField.clear();
-        lastNameField.clear();
+        nombreyApellidoField.clear();
+        ciudadField.clear();
+        codigoPostalField.clear();
+        direccionField.clear();
         emailField.clear();
         registerPasswordField.clear();
         confirmPasswordField.clear();
