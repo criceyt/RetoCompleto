@@ -19,96 +19,63 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try (ObjectInputStream entrada = new ObjectInputStream(clientSocket.getInputStream());
-             ObjectOutputStream salida = new ObjectOutputStream(clientSocket.getOutputStream())) {
+                ObjectOutputStream salida = new ObjectOutputStream(clientSocket.getOutputStream())) {
 
-            System.out.println("Cliente conectado desde: " + clientSocket.getInetAddress());
+            String action = (String) entrada.readObject(); // Lee la acción (register o login)
+            Usuario usuario = (Usuario) entrada.readObject(); // Lee el objeto Usuario
 
-            // Leer la acción y el mensaje
-            String action = (String) entrada.readObject();
-            Message mensaje = (Message) entrada.readObject();
-
-            System.out.println("Acción recibida: " + action);
-            System.out.println("Mensaje recibido: " + (mensaje != null ? mensaje.getUsuario().getEmail() : "Mensaje nulo"));
+            // Crear el objeto Message con la acción y el usuario
+            Message mensaje = new Message(action, usuario);
 
             String response;
             if ("register".equals(action)) {
-                response = handleRegistration(mensaje.getUsuario()); // Pasar el usuario directamente
+                response = handleRegistration(mensaje); // Pasar el objeto Message
             } else if ("login".equals(action)) {
-                response = handleLogin(mensaje.getUsuario()); // Pasar el usuario directamente
+                response = handleLogin(mensaje); // Pasar el objeto Message
             } else {
                 response = "Acción desconocida";
             }
 
-            // Enviar la respuesta
-            salida.writeObject(response);
+            salida.writeObject(response); // Envía la respuesta al cliente
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error en el procesamiento del cliente: " + e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(); // Manejar el error según sea necesario
         } finally {
             try {
-                clientSocket.close();
+                clientSocket.close(); // Cierra el socket del cliente
             } catch (IOException e) {
-                System.err.println("Error al cerrar el socket: " + e.getMessage());
-                e.printStackTrace();
+                e.printStackTrace(); // Manejar el error según sea necesario
             }
         }
     }
 
-    private String handleRegistration(Usuario usuario) {
-        System.out.println("Iniciando registro para: " + usuario.getEmail());
+    private String handleRegistration(Message mensaje) {
+        // Obtener la conexión del ConnectionPool
+        Connection connection = connectionPool.getConnection();
+        Dao dao = new Dao(connection); // Pasar la conexión al DAO
+        boolean registered = dao.singUp(mensaje); // Usar el objeto Message
 
-        Connection connection = null;
-        try {
-            connection = connectionPool.getConnection(); // Obtener una conexión del pool
-            Dao dao = new Dao(connection); // Crear una instancia del DAO
+        connectionPool.releaseConnection(connection); // Liberar la conexión después de usarla
 
-            // Llamar a singUp() con el objeto Usuario extraído
-            boolean registered = dao.singUp(usuario); // Pasar el objeto usuario
-
-            if (registered) {
-                System.out.println("Registro exitoso para: " + usuario.getEmail());
-                return "Registro exitoso";
-            } else {
-                System.out.println("Error en el registro: el usuario ya existe para: " + usuario.getEmail());
-                return "Error en el registro: el usuario ya existe.";
-            }
-        } catch (Exception e) {
-            System.err.println("Error durante el registro: " + e.getMessage());
-            e.printStackTrace();
-            return "Error durante el registro.";
-        } finally {
-            if (connection != null) {
-                connectionPool.releaseConnection(connection); // Liberar la conexión
-            }
+        if (registered) {
+            return "Registro exitoso";
+        } else {
+            return "Error en el registro: el usuario ya existe.";
         }
     }
 
-    private String handleLogin(Usuario usuario) {
-        System.out.println("Iniciando sesión para: " + usuario.getEmail()); // Log de inicio de sesión
+    private String handleLogin(Message mensaje) {
+        // Obtener la conexión del ConnectionPool
+        Connection connection = connectionPool.getConnection();
+        Dao dao = new Dao(connection); // Pasar la conexión al DAO
+        boolean authenticated = dao.login(mensaje); // Usar el objeto Message
 
-        Connection connection = null;
-        try {
-            connection = connectionPool.getConnection(); // Obtener la conexión
-            Dao dao = new Dao(connection); // Pasar la conexión al DAO
+        connectionPool.releaseConnection(connection); // Liberar la conexión después de usarla
 
-            // Extraer el email y la contraseña del usuario para la autenticación
-            boolean authenticated = dao.login(usuario.getEmail(), usuario.getPassword()); // Método en el DAO que maneja la autenticación
-
-            if (authenticated) {
-                System.out.println("Login exitoso para: " + usuario.getEmail()); // Log de éxito
-                return "Login exitoso";
-            } else {
-                System.out.println("Error en el inicio de sesión: credenciales incorrectas para: " + usuario.getEmail()); // Log de error
-                return "Error en el inicio de sesión: credenciales incorrectas.";
-            }
-        } catch (Exception e) {
-            System.err.println("Error durante el inicio de sesión: " + e.getMessage());
-            e.printStackTrace();
-            return "Error durante el inicio de sesión.";
-        } finally {
-            if (connection != null) {
-                connectionPool.releaseConnection(connection); // Liberar la conexión después de usarla
-            }
+        if (authenticated) {
+            return "Login exitoso";
+        } else {
+            return "Error en el inicio de sesión: credenciales incorrectas.";
         }
     }
+
 }

@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @author crice
  */
 public enum Request implements Serializable{
+    
     SING_UP_REQUEST,  // Registro de cuenta
     SING_IN_REQUEST,  // Inicio de sesión
     SING_OUT_REQUEST, // Cierre de sesión

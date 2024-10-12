@@ -1,6 +1,5 @@
 package dataAccessTier;
 
-import libreria.Usuario;
 import java.io.*;
 import java.net.*;
 import java.util.Properties;
