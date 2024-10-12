@@ -6,10 +6,11 @@ import libreria.Usuario;
  *
  * @author 2dam
  */
+import libreria.Message;
+
 public interface Signable {
 
-    public boolean login(String username, String password);
+    public boolean login(Message mensaje);    // Cambiado para recibir un objeto Message
 
-    boolean singUp(Usuario usuario);
-
+    public boolean singUp(Message mensaje);   // Cambiado para recibir un objeto Message
 }

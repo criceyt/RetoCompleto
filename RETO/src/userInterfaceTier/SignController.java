@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import validations.ErrorHandler;
 import libreria.Usuario;
+import libreria.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,9 +69,19 @@ public class SignController {
         String password = passwordField.getText();
 
         try {
-            if (errorHandler.autenticar(email, password)) {
+            // Crear objeto Usuario y Message para el login
+            Usuario usuario = new Usuario(email, password, null, null, null, null);
+            Message mensaje = new Message(usuario);
+
+            // Invocar el método login
+            Signable signable = ClientFactory.getSignable();
+            boolean loginExitoso = signable.login(mensaje);
+
+            if (loginExitoso) {
                 messageLabel.setText("¡Inicio de sesión exitoso!");
                 System.out.println("Usuario autenticado: " + email);
+            } else {
+                showAlert("Error en el inicio de sesión", "Credenciales incorrectas.");
             }
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
@@ -117,13 +128,14 @@ public class SignController {
         }
 
         try {
-            // Crea el objeto usuario
+            // Crear el objeto usuario
             Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
+            // Crear objeto Message para el registro
+            Message mensaje = new Message(usuario);
 
             Signable signable = ClientFactory.getSignable();
-            boolean registrado = signable.singUp(usuario); // Almacena el resultado de la operación
+            boolean registrado = signable.singUp(mensaje); // Ahora recibe un objeto Message
 
-            // Muestra alerta según el resultado
             if (registrado) {
                 showAlert("Registro exitoso", "El usuario ha sido registrado correctamente.");
                 messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
@@ -131,7 +143,6 @@ public class SignController {
             } else {
                 showAlert("Error en el registro", "No se pudo registrar al usuario. Puede que ya exista.");
             }
-
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
         }

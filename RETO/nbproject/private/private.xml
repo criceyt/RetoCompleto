@@ -11,6 +11,12 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RETO/src/userInterfaceTier/SignController.java</file>
+            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RETO/src/userInterfaceTier/Client.java</file>
+            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RETO/src/userInterfaceTier/ClientFactory.java</file>
+            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RETO/src/userInterfaceTier/Application.java</file>
+            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RETO/src/ui/FXMLLogin.fxml</file>
+        </group>
     </open-files>
 </project-private>
