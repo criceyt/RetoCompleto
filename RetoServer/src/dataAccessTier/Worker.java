@@ -12,7 +12,7 @@ import libreria.Usuario;
 
 /**
  *
- * @author 2dam
+ * @author gorka
  */
 public class Worker implements Signable, Runnable {
 

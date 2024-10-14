@@ -7,7 +7,7 @@ package dataAccessTier;
 
 /**
  *
- * @author 2dam
+ * @author gorka
  */
 public class Aplicattion {
     
