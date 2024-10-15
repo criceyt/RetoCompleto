@@ -2,7 +2,8 @@ package libreria;
 
 import java.io.Serializable;
 
-public class Usuario implements Serializable{
+public class Usuario implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     private String email; // Este campo se usará como login
@@ -25,6 +26,17 @@ public class Usuario implements Serializable{
         this.name = nombreyApellidos; // Usar el nombre y apellidos como name
         this.companyId = 1; // Valor por defecto según tu implementación
         this.active = true; // Por defecto, el usuario está activo
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{"
+                + "email='" + email + '\''
+                + ", nombreyApellidos='" + nombreyApellidos + '\''
+                + ", direccion='" + direccion + '\''
+                + ", ciudad='" + ciudad + '\''
+                + ", codigoPostal='" + codigoPostal + '\''
+                + '}';
     }
 
     // Getters y Setters

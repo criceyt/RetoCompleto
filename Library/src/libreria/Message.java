@@ -4,26 +4,41 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
        private static final long serialVersionUID = 1L;
-    private String action; // "login" o "register"
-    private Usuario usuario;
+     private String action; // La acción a realizar (register, login)
+    private Usuario usuario; // El objeto usuario
 
-    // Constructor para registro
-    public Message(Usuario usuario) {
+     public Message(Usuario usuario) {
         this.usuario = usuario;
-        this.action = (usuario != null) ? "register" : null; // Si el usuario no es nulo, es un registro
     }
 
-    // Constructor para inicio de sesión
+
     public Message(String action, Usuario usuario) {
         this.action = action;
         this.usuario = usuario;
     }
 
+    // Getters y Setters
     public String getAction() {
         return action;
     }
 
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "action='" + action + '\'' +
+                ", usuario=" + usuario + // Esto llamará al toString() de Usuario
+                '}';
     }
 }

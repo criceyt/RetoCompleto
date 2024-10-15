@@ -1,90 +1,94 @@
 package dataAccessTier;
 
-import java.sql.*;
 import libreria.Message;
-import libreria.Signable;
 import libreria.Usuario;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import libreria.Signable;
 
 public class Dao implements Signable {
 
     private Connection connection;
 
     public Dao(Connection connection) {
-        this.connection = connection; // Usa la conexión proporcionada
+        this.connection = connection;
     }
 
-    // Implementación del método para iniciar sesión
     @Override
     public boolean login(Message mensaje) {
-        Usuario usuario = mensaje.getUsuario(); // Obtener el usuario del objeto Message
         String sql = "SELECT password FROM res_users WHERE login = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, usuario.getEmail());
+            pstmt.setString(1, mensaje.getUsuario().getEmail());
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
-                return storedPassword.equals(usuario.getPassword()); // Verifica la contraseña sin encriptar
+                // Comparar la contraseña tal como está (sin cifrar)
+                return storedPassword.equals(mensaje.getUsuario().getPassword());
             }
-            return false; // Usuario no encontrado o contraseña incorrecta
+            return false; // Usuario no encontrado
         } catch (SQLException e) {
-            e.printStackTrace(); // Manejar el error según sea necesario
+            e.printStackTrace();
             return false;
         }
     }
 
-    // Método para registrar un nuevo usuario
     @Override
     public boolean singUp(Message mensaje) {
-        Usuario usuario = mensaje.getUsuario(); // Obtener el usuario del objeto Message
-        String sqlPartner = "INSERT INTO res_partner (name, company_id, street, city, zip) VALUES (?, ?, ?, ?, ?) RETURNING id";
-        String sqlUser = "INSERT INTO res_users (login, password, partner_id, company_id, active) VALUES (?, ?, ?, ?, true)";
-
+        Usuario usuario = mensaje.getUsuario();
         try {
-            connection.setAutoCommit(false); // Iniciar transacción
+            connection.setAutoCommit(false); // Iniciar la transacción
 
-            // Insertar en res_partner
-            int partnerId;
-            try (PreparedStatement pstmtPartner = connection.prepareStatement(sqlPartner)) {
-                pstmtPartner.setString(1, usuario.getNombreyApellidos()); // Nombre y apellidos
-                pstmtPartner.setInt(2, 1); // company_id es 1 por defecto
-                pstmtPartner.setString(3, usuario.getDireccion()); // Dirección
-                pstmtPartner.setString(4, usuario.getCiudad()); // Ciudad
-                pstmtPartner.setString(5, usuario.getCodigoPostal()); // Código postal
-
-                ResultSet rs = pstmtPartner.executeQuery();
-                if (rs.next()) {
-                    partnerId = rs.getInt(1); // Obtener el ID del socio creado
-                } else {
-                    throw new SQLException("Error al insertar en res_partner.");
+            // Verificar si el usuario ya existe
+            String checkUserSql = "SELECT id FROM res_users WHERE login = ?";
+            try (PreparedStatement checkStmt = connection.prepareStatement(checkUserSql)) {
+                checkStmt.setString(1, usuario.getEmail());
+                ResultSet checkRs = checkStmt.executeQuery();
+                if (checkRs.next()) {
+                    System.out.println("Usuario ya existe.");
+                    return false; // Usuario ya existe, no continuar con el registro
                 }
             }
 
-            // Insertar en res_users
-            try (PreparedStatement pstmtUser = connection.prepareStatement(sqlUser)) {
-                pstmtUser.setString(1, usuario.getEmail()); // Email como login
-                pstmtUser.setString(2, usuario.getPassword()); // Contraseña
-                pstmtUser.setInt(3, partnerId); // Asociar el partner_id recién creado
-                pstmtUser.setInt(4, 1); // company_id es 1 por defecto
+            // Insertar en res_partner
+            String partnerSql = "INSERT INTO res_partner (name, street, city, zip, company_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
+            try (PreparedStatement pstmtPartner = connection.prepareStatement(partnerSql)) {
+                pstmtPartner.setString(1, usuario.getNombreyApellidos());
+                pstmtPartner.setString(2, usuario.getDireccion());
+                pstmtPartner.setString(3, usuario.getCiudad());
+                pstmtPartner.setString(4, usuario.getCodigoPostal());
+                pstmtPartner.setInt(5, 1); // company_id
+                ResultSet partnerRs = pstmtPartner.executeQuery();
 
-                pstmtUser.executeUpdate();
+                if (partnerRs.next()) {
+                    int partnerId = partnerRs.getInt(1);
+
+                    // Insertar en res_users
+                    String userSql = "INSERT INTO res_users (login, password, partner_id, active) VALUES (?, ?, ?, true)";
+                    try (PreparedStatement pstmtUser = connection.prepareStatement(userSql)) {
+                        pstmtUser.setString(1, usuario.getEmail());
+                        pstmtUser.setString(2, usuario.getPassword()); // Guardar la contraseña sin cifrar
+                        pstmtUser.setInt(3, partnerId);
+                        pstmtUser.executeUpdate();
+                    }
+                } else {
+                    throw new SQLException("Error al crear el socio.");
+                }
             }
 
-            connection.commit(); // Confirmar la transacción
+            connection.commit();
             return true; // Registro exitoso
         } catch (SQLException e) {
-            try {
-                connection.rollback(); // Deshacer los cambios si algo falla
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback(); // Deshacer cambios en caso de error
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace(); // Manejar rollback
+                }
             }
-            e.printStackTrace(); // Manejar el error
-            return false;
-        } finally {
-            try {
-                connection.setAutoCommit(true); // Restaurar el auto-commit
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
+            return false; // Indica que el registro falló
         }
     }
 }

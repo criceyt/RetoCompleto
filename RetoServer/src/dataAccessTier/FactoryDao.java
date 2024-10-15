@@ -3,12 +3,8 @@ package dataAccessTier;
 import java.sql.Connection;
 import libreria.Signable;
 
-/**
- *
- * @author crice
- */
 public class FactoryDao {
-    private ConnectionPool connectionPool; // Cambia a ConnectionPool
+    private ConnectionPool connectionPool; // Pool de conexiones
 
     public FactoryDao(ConnectionPool pool) {
         this.connectionPool = pool; // Asigna el ConnectionPool recibido
@@ -16,7 +12,12 @@ public class FactoryDao {
 
     // Método para crear una nueva instancia de Dao
     public Signable createDao() {
-        Connection connection = connectionPool.getConnection(); // Obtener una conexión del pool
-        return new Dao(connection); // Pasar la conexión al Dao
+        try {
+            Connection connection = connectionPool.getConnection(); // Obtener una conexión del pool
+            return new Dao(connection); // Pasar la conexión al Dao
+        } catch (Exception e) {
+            e.printStackTrace(); // Manejo de excepciones
+            throw new RuntimeException("Error al crear DAO", e); // Lanzar una excepción
+        }
     }
 }

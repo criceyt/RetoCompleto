@@ -90,52 +90,63 @@ public class SignController {
 
     @FXML
     private void handleRegister() {
-        String nombreyApellidos = nombreyApellidoField.getText();
-        String direccion = direccionField.getText();
-        String ciudad = ciudadField.getText();
+        // Obtener los datos del formulario
+        String nombreyApellidos = nombreyApellidoField.getText().trim();
+        String direccion = direccionField.getText().trim();
+        String ciudad = ciudadField.getText().trim();
         String codigoPostalTexto = codigoPostalField.getText().trim();
-        String email = emailField.getText();
-        String password = registerPasswordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
+        String email = emailField.getText().trim();
+        String password = registerPasswordField.getText().trim();
+        String confirmPassword = confirmPasswordField.getText().trim();
 
+        // Validar campos requeridos
         List<String> errores = new ArrayList<>();
-
-        if (nombreyApellidos.isEmpty() || direccion.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || ciudad.isEmpty() || codigoPostalTexto.isEmpty()) {
-            errorHandler.handleGeneralException(new Exception("Por favor, completa todos los campos."), messageLabel);
-            return;
+        if (nombreyApellidos.isEmpty() || direccion.isEmpty() || email.isEmpty()
+                || password.isEmpty() || confirmPassword.isEmpty() || ciudad.isEmpty()
+                || codigoPostalTexto.isEmpty()) {
+            errores.add("Por favor, completa todos los campos.");
         }
 
+        // Validar email
         if (!esCorreoValido(email)) {
             errores.add("El correo electrónico no tiene un formato válido.");
         }
 
+        // Comparar contraseñas
         if (!password.equals(confirmPassword)) {
             errores.add("Las contraseñas no coinciden.");
         }
 
+        // Verificar fuerza de la contraseña
         if (!esContraseñaFuerte(password)) {
             errores.add("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula y un número.");
         }
 
+        // Validar código postal
         if (!codigoPostalTexto.matches("\\d{5}")) {
             errores.add("El código postal debe tener exactamente 5 números.");
         }
 
+        // Mostrar errores si existen
         if (!errores.isEmpty()) {
             String mensajeErrores = String.join("\n", errores);
             errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
-            return;
+            return; // Salir del método si hay errores
         }
 
+        // Crear el objeto Usuario
+        Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
+
+        // Crear el objeto Message con el Usuario
+        Message mensaje = new Message("register", usuario); // Asegúrate de que el constructor de Message acepte la acción
+        System.out.println("Mensaje creado: " + mensaje); // Mensaje de depuración
+
+        // Enviar el mensaje al servidor
         try {
-            // Crear el objeto usuario
-            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostalTexto);
-            // Crear objeto Message para el registro
-            Message mensaje = new Message(usuario);
+            Signable signable = ClientFactory.getSignable(); // Obtener la instancia del cliente
+            boolean registrado = signable.singUp(mensaje); // Llamar al método de registro
 
-            Signable signable = ClientFactory.getSignable();
-            boolean registrado = signable.singUp(mensaje); // Ahora recibe un objeto Message
-
+            // Mostrar resultado de la operación
             if (registrado) {
                 showAlert("Registro exitoso", "El usuario ha sido registrado correctamente.");
                 messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
