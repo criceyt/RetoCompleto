@@ -28,7 +28,7 @@ public class Application extends javafx.application.Application{
             stage.setTitle("Sing up & sing in");
             // Poner la escena en el escenario
             stage.setScene(scene);
-            stage.showAndWait();
+            stage.show();
     }
 
     public static void main(String[] args) {

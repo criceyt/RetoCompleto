@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?> <!-- Importar Label -->
+<?import javafx.scene.control.Label?> 
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -24,25 +24,54 @@
         <HBox layoutX="0" layoutY="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
             
             <!-- Panel de inicio de sesión -->
-            <VBox fx:id="loginPane" alignment="CENTER" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20;" HBox.hgrow="ALWAYS">
-                <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Iniciar Sesión" />
-                <TextField fx:id="usernameField" promptText="Usuario" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <PasswordField fx:id="passwordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+            <VBox fx:id="loginPane" alignment="CENTER" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 20; -fx-spacing: 10;" HBox.hgrow="ALWAYS">
+                <Text fill="white" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Iniciar Sesión" />
+
+                <!-- Label para Usuario -->
+                <Label text="Usuario" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="usernameField" promptText="Usuario" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Contraseña -->
+                <Label text="Contraseña" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <PasswordField fx:id="passwordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
                 <Button fx:id="loginButton" onAction="#handleLogin" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Iniciar Sesión" />
                 <Text fill="white" text="¿No tienes cuenta? Regístrate aquí." />
                 <Button fx:id="registerButton" onAction="#showRegister" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Registrarse" />
             </VBox>
 
             <!-- Panel de registro -->
-            <VBox fx:id="registerPane" alignment="CENTER" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 40; -fx-spacing: 20;" visible="false" HBox.hgrow="ALWAYS">
-                <Text fill="white" style="-fx-font-size: 30px; -fx-font-weight: bold;" text="Regístrate" />
-                <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <TextField fx:id="ciudadField" promptText="Ciudad" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <TextField fx:id="codigoPostalField" promptText="Codigo Postal" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <TextField fx:id="direccionField" promptText="Direccion" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <TextField fx:id="emailField" promptText="Correo Electrónico" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <PasswordField fx:id="registerPasswordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
-                <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10;" VBox.vgrow="NEVER"/>
+            <VBox fx:id="registerPane" alignment="CENTER" style="-fx-background-color: rgba(44, 44, 44); -fx-padding: 20; -fx-spacing: 10;" visible="false" HBox.hgrow="ALWAYS">
+                <Text fill="white" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Regístrate" />
+
+                <!-- Label para Nombre y Apellidos -->
+                <Label text="Nombre y Apellidos" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Ciudad -->
+                <Label text="Ciudad" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="ciudadField" promptText="Ciudad" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Codigo Postal -->
+                <Label text="Código Postal" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="codigoPostalField" promptText="Codigo Postal" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Dirección -->
+                <Label text="Dirección" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="direccionField" promptText="Dirección" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Correo Electrónico -->
+                <Label text="Correo Electrónico" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <TextField fx:id="emailField" promptText="Correo Electrónico" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Contraseña -->
+                <Label text="Contraseña" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <PasswordField fx:id="registerPasswordField" promptText="Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
+                <!-- Label para Confirmar Contraseña -->
+                <Label text="Confirmar Contraseña" style="-fx-text-fill: #AAAAAA; -fx-font-size: 12px;" />
+                <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña" style="-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;" />
+
                 <Button onAction="#handleRegister" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Registrarse" />
                 <Text fill="white" text="¿Ya tienes cuenta? Inicia sesión aquí." />
                 <Button onAction="#showLogin" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Iniciar Sesión" />
