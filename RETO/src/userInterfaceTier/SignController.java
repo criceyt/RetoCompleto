@@ -6,19 +6,25 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import validations.ErrorHandler;
 import libreria.Usuario;
-
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 
 public class SignController {
 
     @FXML
     private VBox loginPane;
-
     @FXML
     private VBox registerPane;
 
@@ -53,13 +59,157 @@ public class SignController {
     private TextField emailField;
 
     @FXML
-    private PasswordField confirmPasswordField;
+    private Button revealButton;
 
+    @FXML
+    private Button revealRegisterButton;
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Scene scene;
+    @FXML
+    private Button revealConfirmButton;
+    @FXML
+    private TextField plainTextField;
+    @FXML
+    private TextField plainRegisterTextField;
+    @FXML
+    private TextField plainConfirmTextField;
+    @FXML
+    private HBox passwordFieldParent;
+    @FXML
+    private HBox registerPasswordFieldParent;
+    @FXML
+    private HBox confirmPasswordFieldParent;
+    private ContextMenu contextMenu;
+    private boolean isDarkTheme = true;
     // Dependencia al ErrorHandler
     private ErrorHandler errorHandler = new ErrorHandler();
 
     // Constructor sin parámetros
     public SignController() {
+    }
+
+    @FXML
+    public void initialize() {
+
+        // Crear el menú contextual
+        contextMenu = new ContextMenu();
+        MenuItem optionLight = new MenuItem("Tema Claro");
+        MenuItem optionDark = new MenuItem("Tema Oscuro");
+        MenuItem optionRetro = new MenuItem("Retro");
+        contextMenu.getItems().addAll(optionLight, optionDark, optionRetro);
+
+        loginPane.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                contextMenu.show(loginPane, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        registerPane.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                contextMenu.show(registerPane, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        // Vincular acciones de los MenuItems
+        optionLight.setOnAction(e -> changeToLightTheme());
+        optionDark.setOnAction(e -> changeToDarkTheme());
+        optionRetro.setOnAction(e -> changeToRetroTheme());
+
+        passwordFieldParent = (HBox) passwordField.getParent();
+        registerPasswordFieldParent = (HBox) registerPasswordField.getParent();
+        confirmPasswordFieldParent = (HBox) confirmPasswordField.getParent();
+
+        revealButton.setOnAction(event -> {
+            if (revealButton.getText().equals("Mostrar")) {
+                passwordField.setVisible(false);
+                plainTextField = new TextField(passwordField.getText());
+                plainTextField.setVisible(true);
+                plainTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
+                passwordFieldParent.getChildren().set(0, plainTextField);
+                revealButton.setText("Ocultar");
+            } else {
+                if (plainTextField != null) {
+                    passwordField.setText(plainTextField.getText());
+                    passwordField.setVisible(true);
+                    passwordFieldParent.getChildren().set(0, passwordField);
+                    revealButton.setText("Mostrar");
+                    plainTextField = null;
+                }
+            }
+        });
+
+        revealRegisterButton.setOnAction(event -> {
+            if (revealRegisterButton.getText().equals("Mostrar")) {
+                registerPasswordField.setVisible(false);
+                plainRegisterTextField = new TextField(registerPasswordField.getText());
+                plainRegisterTextField.setVisible(true);
+                plainRegisterTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
+                registerPasswordFieldParent.getChildren().set(0, plainRegisterTextField);
+                revealRegisterButton.setText("Ocultar");
+            } else {
+                if (plainRegisterTextField != null) {
+                    registerPasswordField.setText(plainRegisterTextField.getText());
+                    registerPasswordField.setVisible(true);
+                    registerPasswordFieldParent.getChildren().set(0, registerPasswordField);
+                    revealRegisterButton.setText("Mostrar");
+                    plainRegisterTextField = null;
+                }
+            }
+        });
+
+        revealConfirmButton.setOnAction(event -> {
+            if (revealConfirmButton.getText().equals("Mostrar")) {
+                confirmPasswordField.setVisible(false);
+                plainConfirmTextField = new TextField(confirmPasswordField.getText());
+                plainConfirmTextField.setVisible(true);
+                plainConfirmTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
+                confirmPasswordFieldParent.getChildren().set(0, plainConfirmTextField);
+                revealConfirmButton.setText("Ocultar");
+            } else {
+                if (plainConfirmTextField != null) {
+                    confirmPasswordField.setText(plainConfirmTextField.getText());
+                    confirmPasswordField.setVisible(true);
+                    confirmPasswordFieldParent.getChildren().set(0, confirmPasswordField);
+                    revealConfirmButton.setText("Mostrar");
+                    plainConfirmTextField = null;
+                }
+            }
+        });
+
+    }
+
+    private void changeToLightTheme() {
+        // Asegúrate de que loginPane tiene una escena antes de intentar acceder
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesClaro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
+    }
+
+    // Método para cambiar al tema oscuro
+    private void changeToDarkTheme() {
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
+    }
+
+    private void changeToRetroTheme() {
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesRetro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
     }
 
     @FXML
@@ -223,4 +373,5 @@ public class SignController {
                 && password.matches(".*[a-z].*")
                 && password.matches(".*[0-9].*");
     }
+
 }

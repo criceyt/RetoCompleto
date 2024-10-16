@@ -1,0 +1,71 @@
+/* Fondo de pantalla */
+#backgroundImage {
+    -fx-image: url("/ui/fondoRetro_(1).jpg"); /* Cambia a una imagen de fondo cyberpunk */
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+/* Estilos para el contenedor principal */
+.login-pane, .register-pane {
+    -fx-background-color: rgba(20, 20, 30, 0.9); /* Fondo oscuro con opacidad */
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-border-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.6), 15, 0, 0, 0); /* Sombra de neón cian */
+}
+
+/* Estilos para el texto del título */
+.text-title {
+    -fx-fill: #FF77FF; /* Rosa neón */
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Press Start 2P'; /* Fuente retro */
+    -fx-effect: dropshadow(gaussian, rgba(255, 119, 255, 0.8), 5, 0, 0, 0); /* Sombra rosa */
+}
+
+/* Estilos para los labels */
+.label {
+    -fx-text-fill: #00FFFF; /* Texto cian */
+    -fx-font-size: 14px; 
+    -fx-font-family: 'Courier New'; /* Fuente retro */
+}
+
+/* Estilos para los TextField */
+.text-field {
+    -fx-background-color: rgba(30, 30, 30, 0.8); /* Fondo oscuro */
+    -fx-text-fill: #00FFFF; /* Texto cian */
+    -fx-border-color: #FF77FF; /* Borde rosa */
+    -fx-border-radius: 10;
+    -fx-border-width: 2; 
+}
+
+/* Estilos para los PasswordField */
+.password-field {
+    -fx-background-color: rgba(30, 30, 30, 0.8); /* Fondo oscuro */
+    -fx-text-fill: #00FFFF; /* Texto cian */
+    -fx-border-color: #FF77FF; /* Borde rosa */
+    -fx-border-radius: 10;
+    -fx-border-width: 2; 
+}
+
+/* Estilos para los botones */
+.button {
+    -fx-background-color: rgba(255, 119, 255, 0.8); /* Fondo rosa */
+    -fx-text-fill: #000000; /* Texto negro */
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-color: #00FFFF; /* Borde cian */
+    -fx-border-width: 2; 
+}
+
+/* Efecto hover para los botones */
+.button:hover {
+    -fx-background-color: rgba(0, 255, 255, 0.9); /* Cambia a cian en hover */
+    -fx-text-fill: #000000; /* Texto negro en hover */
+    -fx-cursor: hand; /* Cambia el cursor a mano */
+}
+
+/* Efecto hover para los TextField y PasswordField */
+.text-field:hover, .password-field:hover {
+    -fx-border-color: #FF77FF; /* Cambia a rosa brillante en hover */
+}
