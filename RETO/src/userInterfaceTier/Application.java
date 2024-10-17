@@ -17,21 +17,21 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // Cargar DOM de la vista FXML
+
         Parent root = FXMLLoader.load(getClass().getResource("/ui/FXMLLogin.fxml"));
         
-        // Creamos una escena con nuestra vista
+        
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
         
-        // Asignamos una altura y anchura
+        
         stage.setWidth(900);
         stage.setHeight(780);
         
-        // Ponemos titulo a la app
+        
         stage.setTitle("Sign up & Sign in");
         
-        // Poner la escena en el escenario
+       
         stage.setScene(scene);
         stage.show();
     }
