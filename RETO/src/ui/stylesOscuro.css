@@ -59,3 +59,8 @@
     -fx-max-width: 120;
 }
 
+.custom-checkbox .text {
+    -fx-fill: #AAAAAA; 
+}
+
+

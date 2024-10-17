@@ -78,3 +78,6 @@
 .text-field:hover, .password-field:hover {
     -fx-border-color: #FF77FF; 
 }
+.custom-checkbox .text {
+    -fx-fill: #AAAAAA; 
+}

@@ -56,3 +56,6 @@
     -fx-min-width: 100;
     -fx-max-width: 120;
 }
+.custom-checkbox .text {
+    -fx-fill: #555555; 
+}
