@@ -3,17 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/Worker.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/ServerFactory.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/conexion.properties</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/Aplicattion.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/DAO.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/PoolConexiones.java</file>
-=======
-            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RetoServer/src/dataAccessTier/DAO.java</file>
-            <file>file:/C:/Users/crice/Desktop/RETO/RetoCompleto/RetoServer/src/dataAccessTier/ServerFactory.java</file>
->>>>>>> 4c445646155a8151a56fe55afa31a72994417d95
         </group>
     </open-files>
 </project-private>
