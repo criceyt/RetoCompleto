@@ -47,7 +47,9 @@
     -fx-min-width: 200;
     -fx-max-width: 500;
 }
-
+.text-black {
+    -fx-fill: white;
+}
 /* Estilos para los botones */
 .button {
     -fx-background-color: #555;

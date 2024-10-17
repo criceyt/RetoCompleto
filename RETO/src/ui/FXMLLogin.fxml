@@ -30,7 +30,7 @@
                     <Button fx:id="revealButton" text="Mostrar" styleClass="button" />
                 </HBox>
                 <Button fx:id="loginButton" onAction="#handleLogin" styleClass="button button-login" text="Iniciar Sesión" />
-                <Text fill="white" text="¿No tienes cuenta? Regístrate aquí." />
+                <Text styleClass="text-black" text="¿No tienes cuenta? Regístrate aquí." />
                 <Button fx:id="registerButton" onAction="#showRegister" styleClass="button button-register" text="Registrarse" />
             </VBox>
 
@@ -66,7 +66,7 @@
 
 
                 <Button onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
-                <Text fill="white" text="¿Ya tienes cuenta? Inicia sesión aquí." />
+                <Text styleClass="text-black" text="¿Ya tienes cuenta? Inicia sesión aquí." />
                 <Button fx:id="backToLoginButton" onAction="#showLogin" styleClass="button button-register" text="Iniciar Sesión" />
             </VBox>
         </HBox>

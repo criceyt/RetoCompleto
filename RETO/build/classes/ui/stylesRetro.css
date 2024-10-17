@@ -74,7 +74,9 @@
     -fx-cursor: hand;
 }
 
-
+.text-black {
+    -fx-fill: white;
+}
 .text-field:hover, .password-field:hover {
     -fx-border-color: #FF77FF; 
 }
