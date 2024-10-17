@@ -1,6 +1,6 @@
 /* Fondo de pantalla */
 #backgroundImage {
-    -fx-image: url("/ui/fondoRetro_(1).jpg");
+    -fx-image: url("/ui/fondoRetro.jpg");
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 }

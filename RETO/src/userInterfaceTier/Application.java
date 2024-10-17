@@ -26,7 +26,7 @@ public class Application extends javafx.application.Application {
         
         // Asignamos una altura y anchura
         stage.setWidth(900);
-        stage.setHeight(780);
+        stage.setHeight(770);
         
         // Ponemos titulo a la app
         stage.setTitle("Sign up & Sign in");
