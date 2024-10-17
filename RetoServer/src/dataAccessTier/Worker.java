@@ -14,9 +14,9 @@ import libreria.Usuario;
  *
  * @author gorka
  */
-public class Worker implements Signable, Runnable {
+public class Worker implements Runnable {
 
-    int contador;
+    private Signable signable;
     private final int PUERTO = 5000;
     private final String clave = "abcd";
 
@@ -32,17 +32,15 @@ public class Worker implements Signable, Runnable {
             while (true) {
                 socket = server.accept();
                 System.out.println("Cliente conectado");
-                contador++;
+
+                salida = new ObjectOutputStream(socket.getOutputStream());
+                entrada = new ObjectInputStream(socket.getInputStream());
+
+                // Recibir el objeto Usuario
+                usuario = (Usuario) entrada.readObject();
+
+                salida.writeObject("Usuario recibido correctamente.");
             }
-
-            
-            salida = new ObjectOutputStream(socket.getOutputStream());
-            entrada = new ObjectInputStream(socket.getInputStream());
-
-            // Recibir el objeto Usuario
-            usuario = (Usuario) entrada.readObject();
-
-            salida.writeObject("Usuario recibido correctamente.");
 
         } catch (IOException ex) {
             Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
@@ -50,6 +48,10 @@ public class Worker implements Signable, Runnable {
 
     }
 
+    /**
+     *
+     * @param usuario
+     */
     @Override
     public void singUp(Usuario usuario) {
         try {
@@ -59,13 +61,14 @@ public class Worker implements Signable, Runnable {
         }
     }
 
-    public MiHilo() {
-        Thread hilo = new Thread(this);
-        hilo.start();
+
+    public static void main(String[] args) {
+
     }
 
-    public static void main(String[] args){
-        Worker 
+    @Override
+    public void run() {
+
     }
 
 }

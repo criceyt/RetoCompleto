@@ -18,7 +18,9 @@ public class Application extends javafx.application.Application{
     @Override
     public void start(Stage stage) throws Exception{
             // Cargar DOM de la vista FXML
-            Parent root = FXMLLoader.load(getClass().getResource("/ui/FXMLLogin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/FXMLLogin.fxml"));
+            Parent root = (Parent)loader.load();
+          
             // Creamos una escena con nuestra vista
             Scene scene = new Scene(root);
             // Asignamos una altura y anchura
@@ -28,7 +30,7 @@ public class Application extends javafx.application.Application{
             stage.setTitle("Sing up & sing in");
             // Poner la escena en el escenario
             stage.setScene(scene);
-            stage.showAndWait();
+            stage.show();
     }
 
     public static void main(String[] args) {

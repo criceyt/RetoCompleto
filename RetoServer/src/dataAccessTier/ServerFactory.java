@@ -5,11 +5,16 @@
  */
 package dataAccessTier;
 
+import libreria.Signable;
+
 /**
  *
- * @author 2dam
+ * @author oier, gorka
  */
 public class ServerFactory {
-  
-    
+
+    public static Signable getSignable() {
+        return new DAO();
+    }
+
 }
