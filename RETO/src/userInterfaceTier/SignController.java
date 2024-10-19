@@ -159,6 +159,30 @@ public class SignController {
             }
         });
 
+        revealButton.setOnAction(event -> {
+            if (revealButton.getText().equals("Mostrar")) {
+                passwordField.setVisible(false);
+                plainTextField = new TextField(passwordField.getText());
+                plainTextField.setVisible(true);
+                plainTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
+                passwordFieldParent.getChildren().set(0, plainTextField);
+                revealButton.setText("Ocultar");
+
+                // Listener para actualizar el PasswordField en tiempo real
+                plainTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    passwordField.setText(newValue);
+                });
+            } else {
+                if (plainTextField != null) {
+                    passwordField.setText(plainTextField.getText());
+                    passwordField.setVisible(true);
+                    passwordFieldParent.getChildren().set(0, passwordField);
+                    revealButton.setText("Mostrar");
+                    plainTextField = null;
+                }
+            }
+        });
+
         revealConfirmButton.setOnAction(event -> {
             if (revealConfirmButton.getText().equals("Mostrar")) {
                 confirmPasswordField.setVisible(false);
@@ -167,6 +191,11 @@ public class SignController {
                 plainConfirmTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
                 confirmPasswordFieldParent.getChildren().set(0, plainConfirmTextField);
                 revealConfirmButton.setText("Ocultar");
+
+                // Listener para actualizar el PasswordField en tiempo real
+                plainConfirmTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    confirmPasswordField.setText(newValue);
+                });
             } else {
                 if (plainConfirmTextField != null) {
                     confirmPasswordField.setText(plainConfirmTextField.getText());
@@ -230,6 +259,7 @@ public class SignController {
 
     @FXML
     private void handleRegister() {
+
         String nombreyApellidos = nombreyApellidoField.getText();
         String direccion = direccionField.getText();
         String ciudad = ciudadField.getText();
@@ -239,7 +269,12 @@ public class SignController {
         String confirmPassword = confirmPasswordField.getText();
 
         List<String> errores = new ArrayList<>();
-
+        if (plainRegisterTextField != null) {
+            registerPasswordField.setText(plainRegisterTextField.getText());
+        }
+        if (plainConfirmTextField != null) {
+            confirmPasswordField.setText(plainConfirmTextField.getText());
+        }
         // Verificar si todos los campos están vacíos
         if (nombreyApellidos.isEmpty() && direccion.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && ciudad.isEmpty() && codigoPostalTexto.isEmpty()) {
             errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
