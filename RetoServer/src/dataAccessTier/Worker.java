@@ -5,67 +5,82 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Signable;
+import libreria.Mensaje;
+import static libreria.Request.SIGN_UP_REQUEST;
 import libreria.Usuario;
 
 /**
  *
  * @author gorka
  */
-public class Worker implements Signable, Runnable {
+public class Worker implements Runnable {
 
-    int contador;
-    private final int PUERTO = 5000;
+    //private Signable signable;  pa q se usa
+    private static final Logger LOGGER = Logger.getLogger(Worker.class.getName());
     private final String clave = "abcd";
+    ServerSocket server = null;
+    Socket socket = null;
+    ObjectInputStream entrada = null;
+    ObjectOutputStream salida = null;
+    int numeroCliente;
+    //Crear constructor para worker y que tenga un parametro socket y guardarlo en un atributo (socket)
 
-    public void iniciar(Usuario usuario) throws Exception {
+    public Worker(Socket socketCliente, int numeroCliente) {
+        this.socket = socketCliente;
+        this.numeroCliente = numeroCliente;
+    }
 
-        ServerSocket server = null;
-        Socket socket = null;
-        ObjectInputStream entrada = null;
-        ObjectOutputStream salida = null;
 
+    @Override
+    public void run() {
         try {
-            server = new ServerSocket(PUERTO);
-            while (true) {
-                socket = server.accept();
-                System.out.println("Cliente conectado");
-                contador++;
-            }
-
-            
+            // Inicializar los streams de entrada y salida
             salida = new ObjectOutputStream(socket.getOutputStream());
             entrada = new ObjectInputStream(socket.getInputStream());
 
-            // Recibir el objeto Usuario
-            usuario = (Usuario) entrada.readObject();
+            // Recibir el objeto Usuario enviado por el cliente
+            Mensaje mensaje = (Mensaje) entrada.readObject();
+            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + mensaje.getRq());
 
+            // Enviar una confirmación de recepción al cliente
             salida.writeObject("Usuario recibido correctamente.");
+            
+            if(mensaje.getRq().equals(SIGN_UP_REQUEST)) {
+                ServerFactory.getSignable().singUp(mensaje);
+            } else {
+                ServerFactory.getSignable().singIn(mensaje);
+            }
+            
+            
 
-        } catch (IOException ex) {
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.severe("Error al procesar el cliente " + numeroCliente + ": " + e.getMessage());
+        } catch (SQLException ex) {
             Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            // Cerrar el socket y los streams
+            finalizar();
         }
-
     }
-
-    @Override
-    public void singUp(Usuario usuario) {
+    
+    public void finalizar() {
         try {
-            iniciar(usuario);
-        } catch (Exception ex) {
-            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+            if (entrada != null) {
+                entrada.close();
+            }
+            if (salida != null) {
+                salida.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            LOGGER.severe("Error al cerrar recursos del cliente " + numeroCliente + ": " + e.getMessage());
         }
-    }
-
-    public MiHilo() {
-        Thread hilo = new Thread(this);
-        hilo.start();
-    }
-
-    public static void main(String[] args){
-        Worker 
     }
 
 }
+

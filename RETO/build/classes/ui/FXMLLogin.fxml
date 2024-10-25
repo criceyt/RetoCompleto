@@ -22,8 +22,8 @@
             <!-- Panel de inicio de sesión -->
             <VBox fx:id="loginPane" alignment="CENTER" styleClass="login-pane" HBox.hgrow="ALWAYS">
                 <Text styleClass="text-title" text="Iniciar Sesión" />
-                <Label text="Usuario" styleClass="label" />
-                <TextField fx:id="usernameField" promptText="Usuario" styleClass="text-field" />
+                <Label text="Email" styleClass="label" />
+                <TextField fx:id="usernameField" promptText="Email" styleClass="text-field" />
                 <Label text="Contraseña" styleClass="label" />
                 <HBox fx:id="passwordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="passwordField" promptText="Contraseña" styleClass="password-field" />

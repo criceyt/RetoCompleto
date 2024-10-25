@@ -44,9 +44,9 @@ public class ErrorHandler {
         return true;
     }
 
-    public void validarYRegistrar(String nombreyApellidos, String ciudad, int codigoPostal, String direccion, String email, String password, String confirmPassword) throws Exception {
+    public void validarYRegistrar(String nombreyApellidos, String ciudad, int codigoPostal, String direccion, String email, String password, String confirmPassword, boolean estaActivo) throws Exception {
         // Validación: Campos vacíos
-        if (nombreyApellidos.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || direccion.isEmpty() || ciudad.isEmpty() || codigoPostal == ' ') {
+        if (nombreyApellidos.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || direccion.isEmpty() || ciudad.isEmpty() || codigoPostal == ' ' ) {
             throw new Exception("Por favor, completa todos los campos.");
         }
 
@@ -71,7 +71,7 @@ public class ErrorHandler {
         }
 
         // Registro exitoso del nuevo usuario
-        Usuario nuevoUsuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal);
+        Usuario nuevoUsuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
         usuariosRegistrados.put(email, nuevoUsuario);
     }
 
@@ -116,6 +116,7 @@ public class ErrorHandler {
         String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$";
         return password.matches(passwordRegex);
     }
+
 
     /**
      * Método para validar y registrar un nuevo usuario. Verifica todos los
