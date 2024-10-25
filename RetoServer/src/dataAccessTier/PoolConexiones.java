@@ -32,7 +32,6 @@ public class PoolConexiones {
     Set<Connection> conexionesOcupadas = new HashSet<>();
 
     // Constructor de la Pool
-    /*
     public PoolConexiones(String databaseUrl, String userName,
             String password, int maxSize) throws SQLException {
         try {
@@ -46,12 +45,9 @@ public class PoolConexiones {
         };
 
         this.maxPoolSize = maxSize;
-    }  
-    */
-    
-    public PoolConexiones() throws SQLException {
+    }  public PoolConexiones() throws SQLException {
         try {
-            fichConf = ResourceBundle.getBundle("libreria.config");
+            fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
             databaseUrl = fichConf.getString("url");
             userName = fichConf.getString("user");
             password = fichConf.getString("password");
@@ -63,7 +59,7 @@ public class PoolConexiones {
         this.maxPoolSize = 10;
     }
 
-    // Creamos una conexion
+    // Creamos una conexion 
     public synchronized Connection getConnection() throws SQLException {
         Connection conn = null;
 
@@ -188,21 +184,21 @@ public class PoolConexiones {
 
     // Just an Example
     public static void main(String[] args) throws SQLException {
-        //PoolConexiones pool = new PoolConexiones(
-         //       "jdbc:postgresql://192.168.219.154:5432/odoo",
-          //      "odoo", "abcd*1234", 2);
+        PoolConexiones pool = new PoolConexiones(
+                "jdbc:postgresql://192.168.37.155:5432/OdooDB",
+                "odoo", "abcd*1234", 2);
 
-       // try (Connection conn = pool.getConnection();
-        //        Statement statement = conn.createStatement()) {
+        try (Connection conn = pool.getConnection();
+                Statement statement = conn.createStatement()) {
 
-        //    ResultSet res = statement.executeQuery("SELECT table_name FROM information_schema.tables");
-         //   while (res.next()) {
-         //       String tblName = res.getString(1);
-         //       System.out.println(tblName);
+            ResultSet res = statement.executeQuery("SELECT table_name FROM information_schema.tables");
+            while (res.next()) {
+                String tblName = res.getString(1);
+                System.out.println(tblName);
             }
-       // } catch (SQLException e) {
-         //   e.printStackTrace();
-  //      }/
-    //}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -5,8 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Signable;
+import libreria.Mensaje;
+import static libreria.Request.SIGN_UP_REQUEST;
 import libreria.Usuario;
 
 /**
@@ -39,15 +42,24 @@ public class Worker implements Runnable {
             entrada = new ObjectInputStream(socket.getInputStream());
 
             // Recibir el objeto Usuario enviado por el cliente
-            Usuario usuario = (Usuario) entrada.readObject();
-            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + usuario.getNombreyApellidos());
+            Mensaje mensaje = (Mensaje) entrada.readObject();
+            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + mensaje.getRq());
 
             // Enviar una confirmación de recepción al cliente
             salida.writeObject("Usuario recibido correctamente.");
+            
+            if(mensaje.getRq().equals(SIGN_UP_REQUEST)) {
+                ServerFactory.getSignable().singUp(mensaje);
+            } else {
+                ServerFactory.getSignable().singIn(mensaje);
+            }
+            
+            
 
-            ServerFactory.getSignable().singUp(usuario);
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.severe("Error al procesar el cliente " + numeroCliente + ": " + e.getMessage());
+        } catch (SQLException ex) {
+            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             // Cerrar el socket y los streams
             finalizar();
@@ -71,3 +83,4 @@ public class Worker implements Runnable {
     }
 
 }
+

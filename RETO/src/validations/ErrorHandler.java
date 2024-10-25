@@ -117,6 +117,7 @@ public class ErrorHandler {
         return password.matches(passwordRegex);
     }
 
+
     /**
      * Método para validar y registrar un nuevo usuario. Verifica todos los
      * campos, formato del correo, fortaleza de la contraseña, y si el usuario

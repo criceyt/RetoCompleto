@@ -19,6 +19,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import libreria.Mensaje;
+import libreria.Request;
 
 public class SignController {
 
@@ -247,12 +249,40 @@ public class SignController {
     private void handleLogin() {
         String email = usernameField.getText();
         String password = passwordField.getText();
+        List<String> errores = new ArrayList<>();
+        
+        if (email.isEmpty() && password.isEmpty()){
+            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
+            return;
+        }
+        
+        if (password.isEmpty()) {
+            errores.add("La contraseña no puede estar vacío.");
+        }
+        
+        if (email.isEmpty()) {
+            errores.add("El email no puede estar vacío.");
+        }
+        
+        if (!esCorreoValido(email)) {
+            errores.add("El correo electrónico no tiene un formato válido.");
+        }
+        
+        if (!errores.isEmpty()) {
+            String mensajeErrores = String.join("\n", errores);
+            errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
+            return; // Salimos del método si hay errores
+        }
 
         try {
             // Autenticar usuario
             if (errorHandler.autenticar(email, password)) {
-                messageLabel.setText("¡Inicio de sesión exitoso!");
-                System.out.println("Usuario autenticado: " + email);
+                Usuario usuario = new Usuario(email, password);
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
+                Signable a = ClientFactory.getSignable();
+                a.signIn(mensaje);
+         //       messageLabel.setText("¡Inicio de sesión exitoso!");
+          //      System.out.println("Usuario autenticado: " + email);
             }
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
@@ -341,8 +371,9 @@ public class SignController {
             
             //messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
             Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
+            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
             Signable a = ClientFactory.getSignable();
-            a.singUp(usuario);
+            a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
@@ -359,6 +390,7 @@ public class SignController {
         registerPasswordField.clear();
         confirmPasswordField.clear();
     }
+    
 
     @FXML
     private void showRegister() {

@@ -1,10 +1,8 @@
 package dataAccessTier;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -25,19 +23,15 @@ public class Aplicattion {
     }
 
     private static void cargarPuerto() {
-        Properties propiedades = new Properties();
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
-
-            String puertoStr = bundle.getString("PUERTO");
-            puerto = Integer.parseInt(puertoStr);
+            String recogerPuerto = bundle.getString("PUERTO");
+            puerto = Integer.parseInt(recogerPuerto);
 
         } catch (NumberFormatException e) {
             LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 5600;
+            puerto = 16700;
         }
-        //Puerto por defecto en caso de error
-
     }
 
     private static void iniciar() {

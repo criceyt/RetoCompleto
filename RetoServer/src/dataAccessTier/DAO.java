@@ -1,13 +1,12 @@
 package dataAccessTier;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import libreria.Mensaje;
 import libreria.Signable;
-import libreria.Usuario;
 
 public class DAO implements Signable {
 
@@ -22,25 +21,18 @@ public class DAO implements Signable {
     private String usuario;
     private String pass;
 
-    // Alta a la tabla parthner
+    // CONSULTA
     private final String altaParner = "INSERT INTO res_partner (company_id, name, email, street, city, zip) VALUES (1, ?, ?, ?, ?, ?)";
-    // Alta a la tabla user
-    private final String altaUsers = "INSERT INTO res_users (company_id, partner_id, login, password, active, notification_type) VALUES (1, ?, ?, ?, ?, 'email')";
-    // Comprobar si el email esta bien
+    private final String altaUsers = "INSERT INTO res_users (company_id, partner_id, login, password, active) VALUES (1, ?, ?, ?, ?)";
+    private final String selectParnerId = "SELECT id FROM res_partner order by id desc limit 1";
     private final String comprobarEmail = "SELECT email FROM res_partner WHERE email=?";
-    // Buscar el id para agregar a res_user
-    private final String selectParthnerId = "select id from res_partner order by id desc limit 1";
-    // Inicio de sesion
-    private final String inicioSesion = "SELECT company_id, partner_id, login, password, active, notification_type FROM res_users WHERE login=? AND passsword=?";
+    private final String inicioSesion = "SELECT company_id, partner_id, login, password, active, notification_type FROM res_users WHERE login=? AND password=?";
 
-    public DAO() {
-        fichConf = ResourceBundle.getBundle("libreria.config");
-        url = fichConf.getString("url");
-        usuario = fichConf.getString("user");
-        pass = fichConf.getString("password");
+    public DAO() throws SQLException {
+        
     }
 
-    private void releaseConnection() throws SQLException {
+    private void conexionRealizada() throws SQLException {
         try {
             if (stmt != null) {
                 stmt.close();
@@ -50,66 +42,64 @@ public class DAO implements Signable {
             }
 
         } catch (SQLException e) {
-// TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void singUp(Usuario usuario) {
 
-        // Se inserta la Primera Parte que corresponde ALTA_PARNER
+    @Override
+    public void singUp(Mensaje mensaje) {
+        
+        // Se inserta la Primera Parte que corresponde ALTA_PARTNER
         try {
-        // Se abre conexion con postgres
-            pool = new PoolConexiones();
+            // Se abre conexion con postgres
             con = pool.getConnection();
 
-            // Primero hay que comprobar que no esta introducido el email
             stmt = con.prepareStatement(comprobarEmail);
-            stmt.setString(1, usuario.getEmail());
+            stmt.setString(1, mensaje.getUser().getEmail());
             ResultSet rs;
             rs = stmt.executeQuery();
 
-            // Hacemos una extepcion de correo
             if (rs.next()) {
-            // mensaje de error CORREO REPE
+                //Correo repetido error
             } else {
-            // PRIMERA TABLA
                 stmt = con.prepareStatement(altaParner);
-
-                stmt.setString(1, usuario.getNombreyApellidos());
-                stmt.setString(2, usuario.getEmail());
-                stmt.setString(3, usuario.getDireccion());
-                stmt.setString(4, usuario.getCiudad());
-                stmt.setInt(5, usuario.getCodigoPostal());
+                
+                stmt.setString(1, mensaje.getUser().getNombreyApellidos());
+                stmt.setString(2, mensaje.getUser().getEmail());
+                stmt.setString(3, mensaje.getUser().getDireccion());
+                stmt.setString(4, mensaje.getUser().getCiudad());
+                stmt.setInt(5, mensaje.getUser().getCodigoPostal());
                 stmt.executeUpdate();
-
-                // Se busca el Parner id y lo implementamos en el alta
-                stmt = con.prepareStatement(selectParthnerId);
+                
+                stmt = con.prepareStatement(selectParnerId);
                 ResultSet rs2 = stmt.executeQuery();
                 int idBuscado = 0;
-                if (rs2.next()) {
+                if(rs2.next()){
                     idBuscado = rs2.getInt("id");
                 }
-
-                // SEGUNDA TABLA
+                
                 stmt = con.prepareStatement(altaUsers);
-
+                
                 stmt.setInt(1, idBuscado);
-                stmt.setString(2, usuario.getEmail());
-                stmt.setString(3, usuario.getPassword());
-                stmt.setBoolean(4, usuario.isEstaActivo());
+                stmt.setString(2, mensaje.getUser().getEmail());
+                stmt.setString(3, mensaje.getUser().getPassword());
+                stmt.setBoolean(4, mensaje.getUser().isEstaActivo());
                 stmt.executeUpdate();
-
-                stmt.executeUpdate();
-
-                releaseConnection();
-
+                
+                conexionRealizada();
             }
 
         } catch (SQLException e) {
-            // ERROR GENERAL
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
     }
+
+    @Override
+    public void singIn(Mensaje mensaje) {
+        
+    }
+
 }

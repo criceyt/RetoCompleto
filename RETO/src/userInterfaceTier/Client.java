@@ -1,20 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package userInterfaceTier;
 
-import java.io.FileInputStream;
 import libreria.Signable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Usuario;
+import libreria.Mensaje;
 
 /**
  *
@@ -30,21 +24,18 @@ public class Client implements Signable {
     ObjectOutputStream salida = null;
 
     private static void cargarPuerto() {
-        Properties propiedades = new Properties();
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
-    
-
-    String puertoStr = bundle.getString("PUERTO");
-    puerto = Integer.parseInt(puertoStr);
+            String recogerPuerto = bundle.getString("PUERTO");
+            puerto = Integer.parseInt(recogerPuerto);
 
         } catch (NumberFormatException e) {
             LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 5600;
+            puerto = 16700;
         }
     }
 
-    public void iniciar(Usuario usuario) throws ClassNotFoundException {
+    public void iniciar(Mensaje mensaje) throws ClassNotFoundException {
 
         try {
             socket = new Socket(HOST, puerto);
@@ -55,7 +46,7 @@ public class Client implements Signable {
 
             salida = new ObjectOutputStream(socket.getOutputStream());
 
-            salida.writeObject(usuario);
+            salida.writeObject(mensaje);
 
         } catch (IOException e) {
             LOGGER.severe("No se ha podido conectar con el servidor" + e.getMessage());
@@ -65,16 +56,16 @@ public class Client implements Signable {
     }
 
     @Override
-    public void singUp(Usuario usuario) {
+    public void singUp(Mensaje mensaje) {
         try {
             cargarPuerto();
-            iniciar(usuario);
+            iniciar(mensaje);
         } catch (ClassNotFoundException e) {
             LOGGER.severe("Error en el registro de usuario" + e.getMessage());
         }
     }
 
-    private void finalizar() {
+     private void finalizar() {
         try {
             if (socket != null) {
                 socket.close();
@@ -86,7 +77,17 @@ public class Client implements Signable {
                 salida.close();
             }
         } catch (IOException e) {
-            LOGGER.severe("Error al intentar cerrar"+ e.getMessage());
+            LOGGER.severe("Error al intentar cerrar" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void signIn(Mensaje mensaje) {
+        try {
+            cargarPuerto();
+            iniciar(mensaje);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

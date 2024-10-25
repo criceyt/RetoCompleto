@@ -10,6 +10,8 @@ import libreria.Usuario;
  */
 public interface Signable {
 
-    public void singUp(Usuario usuario);
+    public void singUp(Mensaje mensaje);
+
+    public void signIn(Mensaje mensaje);
     
 }
