@@ -5,10 +5,8 @@
         <group>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/Worker.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/ServerFactory.java</file>
-            <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/conexion.properties</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/Aplicattion.java</file>
             <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/DAO.java</file>
-            <file>file:/C:/Users/2dam/Documents/NetBeansProjects/RetoServer/src/dataAccessTier/PoolConexiones.java</file>
         </group>
     </open-files>
 </project-private>

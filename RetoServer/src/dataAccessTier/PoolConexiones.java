@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Stack;
 
@@ -16,6 +18,7 @@ import java.util.Stack;
 public class PoolConexiones {
 
     // HERRAMIENTAS NECESARIAS
+    private ResourceBundle fichConf;
     private String databaseUrl;
     private String userName;
     private String password;
@@ -30,11 +33,32 @@ public class PoolConexiones {
 
     // Constructor de la Pool
     public PoolConexiones(String databaseUrl, String userName,
-            String password, int maxSize) {
-        this.databaseUrl = databaseUrl;
-        this.userName = userName;
-        this.password = password;
+            String password, int maxSize) throws SQLException {
+        try {
+            fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
+            databaseUrl = fichConf.getString("url");
+            userName = fichConf.getString("user");
+            password = fichConf.getString("password");
+        } catch (MissingResourceException e) {
+            System.err.println("Error: El archivo de propiedades no se pudo encontrar.");
+            throw new SQLException("No se pudo cargar la configuración de la base de datos.", e);
+        };
+
         this.maxPoolSize = maxSize;
+    }  
+    
+    public PoolConexiones() throws SQLException {
+        try {
+            fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
+            databaseUrl = fichConf.getString("url");
+            userName = fichConf.getString("user");
+            password = fichConf.getString("password");
+        } catch (MissingResourceException e) {
+            System.err.println("Error: El archivo de propiedades no se pudo encontrar.");
+            throw new SQLException("No se pudo cargar la configuración de la base de datos.", e);
+        };
+
+        this.maxPoolSize = 10;
     }
 
     // Creamos una conexion 
@@ -49,7 +73,7 @@ public class PoolConexiones {
 
         // If there is no free connection, create a new one.
         if (conn == null) {
-            conn = createNewConnectionForPool();
+            conn=createNewConnectionForPool();
         }
 
         // For Azure Database for MySQL, if there is no action on one connection for some
@@ -94,7 +118,7 @@ public class PoolConexiones {
      * @throws SQLException When fail to create a new connection.
      */
     private Connection createNewConnectionForPool() throws SQLException {
-        Connection conn = createNewConnection();
+        Connection conn=createNewConnection();
         connNum++;
         conexionesOcupadas.add(conn);
         return conn;
@@ -107,7 +131,7 @@ public class PoolConexiones {
      * @throws SQLException When fail to create a new connection.
      */
     private Connection createNewConnection() throws SQLException {
-        Connection conn = null;
+        Connection conn=null;
         conn = DriverManager.getConnection(databaseUrl, userName, password);
         return conn;
     }
@@ -139,7 +163,7 @@ public class PoolConexiones {
         connNum--;
         conn.close();
 
-        conn = createNewConnection();
+        conn=createNewConnection();
         conexionesOcupadas.add(conn);
         connNum++;
         return conn;
@@ -162,24 +186,21 @@ public class PoolConexiones {
 
     // Just an Example
     public static void main(String[] args) throws SQLException {
-        
-        Connection conn = null;
         PoolConexiones pool = new PoolConexiones(
-                "jdbc:postgresql://192.168.37.155:5432/GorkaExamen",
+                "jdbc:postgresql://192.168.37.155:5432/OdooDB",
                 "odoo", "abcd*1234", 2);
-        try {
-            conn = pool.getConnection();
-            try (Statement statement = conn.createStatement()) {
-                ResultSet res = statement.executeQuery("Mostrar tablas");
-                while (res.next()) {
-                    String tblName = res.getString(1);
-                    System.out.println(tblName);
-                }
+
+        try (Connection conn = pool.getConnection();
+                Statement statement = conn.createStatement()) {
+
+            ResultSet res = statement.executeQuery("SELECT table_name FROM information_schema.tables");
+            while (res.next()) {
+                String tblName = res.getString(1);
+                System.out.println(tblName);
             }
-        } finally {
-            if (conn != null) {
-                pool.returnConnection(conn);
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
+
 }

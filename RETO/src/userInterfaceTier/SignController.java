@@ -1,25 +1,33 @@
 package userInterfaceTier;
 
+import java.io.IOException;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import validations.ErrorHandler;
 import libreria.Usuario;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import libreria.Mensaje;
+import libreria.Request;
 
 public class SignController {
 
@@ -81,6 +89,9 @@ public class SignController {
     private HBox registerPasswordFieldParent;
     @FXML
     private HBox confirmPasswordFieldParent;
+    @FXML
+    private CheckBox activoCheckBox;
+
     private ContextMenu contextMenu;
     private boolean isDarkTheme = true;
     // Dependencia al ErrorHandler
@@ -159,6 +170,30 @@ public class SignController {
             }
         });
 
+        revealButton.setOnAction(event -> {
+            if (revealButton.getText().equals("Mostrar")) {
+                passwordField.setVisible(false);
+                plainTextField = new TextField(passwordField.getText());
+                plainTextField.setVisible(true);
+                plainTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
+                passwordFieldParent.getChildren().set(0, plainTextField);
+                revealButton.setText("Ocultar");
+
+                // Listener para actualizar el PasswordField en tiempo real
+                plainTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    passwordField.setText(newValue);
+                });
+            } else {
+                if (plainTextField != null) {
+                    passwordField.setText(plainTextField.getText());
+                    passwordField.setVisible(true);
+                    passwordFieldParent.getChildren().set(0, passwordField);
+                    revealButton.setText("Mostrar");
+                    plainTextField = null;
+                }
+            }
+        });
+
         revealConfirmButton.setOnAction(event -> {
             if (revealConfirmButton.getText().equals("Mostrar")) {
                 confirmPasswordField.setVisible(false);
@@ -167,6 +202,11 @@ public class SignController {
                 plainConfirmTextField.setStyle("-fx-background-color: #555; -fx-text-fill: white; -fx-border-color: #888; -fx-border-radius: 10; -fx-pref-width: 200; -fx-min-width: 200; -fx-max-width: 300;");
                 confirmPasswordFieldParent.getChildren().set(0, plainConfirmTextField);
                 revealConfirmButton.setText("Ocultar");
+
+                // Listener para actualizar el PasswordField en tiempo real
+                plainConfirmTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    confirmPasswordField.setText(newValue);
+                });
             } else {
                 if (plainConfirmTextField != null) {
                     confirmPasswordField.setText(plainConfirmTextField.getText());
@@ -216,12 +256,40 @@ public class SignController {
     private void handleLogin() {
         String email = usernameField.getText();
         String password = passwordField.getText();
+        List<String> errores = new ArrayList<>();
+
+        if (email.isEmpty() && password.isEmpty()) {
+            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
+            return;
+        }
+
+        if (password.isEmpty()) {
+            errores.add("La contraseña no puede estar vacío.");
+        }
+
+        if (email.isEmpty()) {
+            errores.add("El email no puede estar vacío.");
+        }
+
+        if (!esCorreoValido(email)) {
+            errores.add("El correo electrónico no tiene un formato válido.");
+        }
+
+        if (!errores.isEmpty()) {
+            String mensajeErrores = String.join("\n", errores);
+            errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
+            return; // Salimos del método si hay errores
+        }
 
         try {
             // Autenticar usuario
             if (errorHandler.autenticar(email, password)) {
-                messageLabel.setText("¡Inicio de sesión exitoso!");
-                System.out.println("Usuario autenticado: " + email);
+                Usuario usuario = new Usuario(email, password);
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
+                Signable a = ClientFactory.getSignable();
+                a.signIn(mensaje);
+                                //       messageLabel.setText("¡Inicio de sesión exitoso!");
+                //      System.out.println("Usuario autenticado: " + email);
             }
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
@@ -230,6 +298,7 @@ public class SignController {
 
     @FXML
     private void handleRegister() {
+
         String nombreyApellidos = nombreyApellidoField.getText();
         String direccion = direccionField.getText();
         String ciudad = ciudadField.getText();
@@ -237,9 +306,15 @@ public class SignController {
         String email = emailField.getText();
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
+        boolean estaActivo = activoCheckBox.isSelected();
 
         List<String> errores = new ArrayList<>();
-
+        if (plainRegisterTextField != null) {
+            registerPasswordField.setText(plainRegisterTextField.getText());
+        }
+        if (plainConfirmTextField != null) {
+            confirmPasswordField.setText(plainConfirmTextField.getText());
+        }
         // Verificar si todos los campos están vacíos
         if (nombreyApellidos.isEmpty() && direccion.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && ciudad.isEmpty() && codigoPostalTexto.isEmpty()) {
             errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
@@ -299,11 +374,13 @@ public class SignController {
         // Registrar nuevo usuario usando el ErrorHandler
         try {
             int codigoPostal = Integer.parseInt(codigoPostalTexto);
-            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword);
-            messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
-            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal);
+            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
+
+            //messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
+            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
+            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
             Signable a = ClientFactory.getSignable();
-            a.singUp(usuario);
+            a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
@@ -374,4 +451,8 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
+    public static void abrirVista() {
+        // Cargar el DOM de la vista FXML
+        Parent root = FXMLLoader.load(getClass().getResource("/ui/FXMLDashboard.fxml"));
+    }
 }

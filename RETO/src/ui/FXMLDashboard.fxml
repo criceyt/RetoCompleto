@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:id="rootPane" fx:controller="ui.FXMLDashboardController" stylesheets="@/ui/stylesLogout_Oscuro.css">
+    
+    <Button fx:id="logoutButton" text="Log Out" styleClass="button" />
+</AnchorPane>

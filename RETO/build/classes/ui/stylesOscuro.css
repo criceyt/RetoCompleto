@@ -47,7 +47,9 @@
     -fx-min-width: 200;
     -fx-max-width: 500;
 }
-
+.text-black {
+    -fx-fill: white;
+}
 /* Estilos para los botones */
 .button {
     -fx-background-color: #555;
@@ -58,4 +60,9 @@
     -fx-min-width: 100;
     -fx-max-width: 120;
 }
+
+.custom-checkbox .text {
+    -fx-fill: #AAAAAA; 
+}
+
 

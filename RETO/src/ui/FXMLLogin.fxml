@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?> 
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -12,79 +12,63 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterfaceTier.SignController">
-
     <children>
-      <!-- Imagen de fondo sin la imagen directamente en línea -->
-<ImageView fx:id="backgroundImage" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
-
+        <!-- Imagen de fondo -->
+        <ImageView fx:id="backgroundImage" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
         
-        <!-- Contenedor principal que ajusta los componentes a la ventana -->
+        <!-- Contenedor principal -->
         <HBox layoutX="0" layoutY="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
             
             <!-- Panel de inicio de sesión -->
             <VBox fx:id="loginPane" alignment="CENTER" styleClass="login-pane" HBox.hgrow="ALWAYS">
                 <Text styleClass="text-title" text="Iniciar Sesión" />
-
-                <!-- Label para Usuario -->
-                <Label text="Usuario" styleClass="label" />
-                <TextField fx:id="usernameField" promptText="Usuario" styleClass="text-field" />
-
-                <!-- Label para Contraseña -->
+                <Label text="Email" styleClass="label" />
+                <TextField fx:id="usernameField" promptText="Email" styleClass="text-field" />
                 <Label text="Contraseña" styleClass="label" />
                 <HBox fx:id="passwordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="passwordField" promptText="Contraseña" styleClass="password-field" />
                     <Button fx:id="revealButton" text="Mostrar" styleClass="button" />
                 </HBox>
-
-               <Button fx:id="loginButton" onAction="#handleLogin" styleClass="button button-login" text="Iniciar Sesión" />
-                <Text fill="white" text="¿No tienes cuenta? Regístrate aquí." />
+                <Button fx:id="loginButton" onAction="#handleLogin" styleClass="button button-login" text="Iniciar Sesión" />
+                <Text styleClass="text-black" text="¿No tienes cuenta? Regístrate aquí." />
                 <Button fx:id="registerButton" onAction="#showRegister" styleClass="button button-register" text="Registrarse" />
             </VBox>
 
             <!-- Panel de registro -->
             <VBox fx:id="registerPane" alignment="CENTER" styleClass="register-pane" visible="false" HBox.hgrow="ALWAYS">
                 <Text styleClass="text-title" text="Regístrate" />
-
-                <!-- Label para Nombre y Apellidos -->
                 <Label text="Nombre y Apellidos" styleClass="label" />
                 <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" styleClass="text-field" />
-
-                <!-- Label para Ciudad -->
                 <Label text="Ciudad" styleClass="label" />
                 <TextField fx:id="ciudadField" promptText="Ciudad" styleClass="text-field" />
-
-                <!-- Label para Codigo Postal -->
                 <Label text="Código Postal" styleClass="label" />
-                <TextField fx:id="codigoPostalField" promptText="Codigo Postal" styleClass="text-field" />
-
-                <!-- Label para Dirección -->
+                <TextField fx:id="codigoPostalField" promptText="Código Postal" styleClass="text-field" />
                 <Label text="Dirección" styleClass="label" />
                 <TextField fx:id="direccionField" promptText="Dirección" styleClass="text-field" />
-
-                <!-- Label para Correo Electrónico -->
                 <Label text="Correo Electrónico" styleClass="label" />
                 <TextField fx:id="emailField" promptText="Correo Electrónico" styleClass="text-field" />
-
-                <!-- Label para Contraseña -->
                 <Label text="Contraseña" styleClass="label" />
                 <HBox fx:id="registerPasswordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="registerPasswordField" promptText="Contraseña" styleClass="password-field" />
                     <Button fx:id="revealRegisterButton" text="Mostrar" styleClass="button" />
                 </HBox>
-
-                <!-- Label para Confirmar Contraseña -->
                 <Label text="Confirmar Contraseña" styleClass="label" />
                 <HBox fx:id="confirmPasswordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña" styleClass="password-field" />
                     <Button fx:id="revealConfirmButton" text="Mostrar" styleClass="button" />
                 </HBox>
 
+                <!-- Checkbox para activo con el texto a la izquierda -->
+             
+                <HBox alignment="CENTER">
+                    <CheckBox fx:id="activoCheckBox" text="Activo" selected="true" styleClass="custom-checkbox"/>
+                </HBox>
+
+
                 <Button onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
-                <Text fill="white" text="¿Ya tienes cuenta? Inicia sesión aquí." />
+                <Text styleClass="text-black" text="¿Ya tienes cuenta? Inicia sesión aquí." />
                 <Button fx:id="backToLoginButton" onAction="#showLogin" styleClass="button button-register" text="Iniciar Sesión" />
             </VBox>
         </HBox>
     </children>
-
-
 </AnchorPane>

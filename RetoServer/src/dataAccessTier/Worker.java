@@ -5,9 +5,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Signable;
+import libreria.Mensaje;
+import libreria.Request;
+import static libreria.Request.SIGN_UP_REQUEST;
 import libreria.Usuario;
 
 /**
@@ -16,59 +19,69 @@ import libreria.Usuario;
  */
 public class Worker implements Runnable {
 
-    private Signable signable;
-    private final int PUERTO = 5000;
+    //private Signable signable;  pa q se usa
+    private static final Logger LOGGER = Logger.getLogger(Worker.class.getName());
     private final String clave = "abcd";
+    ServerSocket server = null;
+    Socket socket = null;
+    DAO dao = null;
+    ObjectInputStream entrada = null;
+    ObjectOutputStream salida = null;
+    int numeroCliente;
+    //Crear constructor para worker y que tenga un parametro socket y guardarlo en un atributo (socket)
 
-    public void iniciar(Usuario usuario) throws Exception {
 
-        ServerSocket server = null;
-        Socket socket = null;
-        ObjectInputStream entrada = null;
-        ObjectOutputStream salida = null;
-
-        try {
-            server = new ServerSocket(PUERTO);
-            while (true) {
-                socket = server.accept();
-                System.out.println("Cliente conectado");
-
-                salida = new ObjectOutputStream(socket.getOutputStream());
-                entrada = new ObjectInputStream(socket.getInputStream());
-
-                // Recibir el objeto Usuario
-                usuario = (Usuario) entrada.readObject();
-
-                salida.writeObject("Usuario recibido correctamente.");
-            }
-
-        } catch (IOException ex) {
-            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+    Worker(Socket socketCliente, int numeroCliente, DAO dao) {
+        this.socket = socketCliente;
+        this.numeroCliente = numeroCliente;
+        this.dao = dao;
     }
 
-    /**
-     *
-     * @param usuario
-     */
-    @Override
-    public void singUp(Usuario usuario) {
-        try {
-            iniciar(usuario);
-        } catch (Exception ex) {
-            Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-
-    public static void main(String[] args) {
-
-    }
 
     @Override
     public void run() {
+        try {
+            // Inicializar los streams de entrada y salida
+            salida = new ObjectOutputStream(socket.getOutputStream());
+            entrada = new ObjectInputStream(socket.getInputStream());
 
+            // Recibir el objeto Usuario enviado por el cliente
+            Mensaje mensaje = (Mensaje) entrada.readObject();
+            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + mensaje.getRq());
+
+            // Enviar una confirmación de recepción al cliente
+            if(mensaje.getRq().equals(Request.SIGN_UP_REQUEST)) {
+                dao.singUp(mensaje);
+                salida.writeObject(mensaje);
+            } else {
+                dao.signIn(mensaje);     
+                System.out.println("Mensaje recibido: " + mensaje.getRq());
+                salida.writeObject(mensaje);
+            }         
+
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.severe("Error al procesar el cliente " + numeroCliente + ": " + e.getMessage());
+        } finally {
+            // Cerrar el socket y los streams
+            finalizar();
+        }
+    }
+    
+    public void finalizar() {
+        try {
+            if (entrada != null) {
+                entrada.close();
+            }
+            if (salida != null) {
+                salida.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            LOGGER.severe("Error al cerrar recursos del cliente " + numeroCliente + ": " + e.getMessage());
+        }
     }
 
 }
+
