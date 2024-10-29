@@ -5,6 +5,7 @@
  */
 package dataAccessTier;
 
+import java.sql.SQLException;
 import libreria.Signable;
 
 /**
@@ -13,7 +14,7 @@ import libreria.Signable;
  */
 public class ServerFactory {
 
-    public static Signable getSignable() {
+    public static Signable getSignable() throws SQLException {
         return new DAO();
     }
 

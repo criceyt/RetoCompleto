@@ -1,20 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package userInterfaceTier;
 
-import java.io.FileInputStream;
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
 import libreria.Signable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Usuario;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import libreria.Mensaje;
+import libreria.Request;
 
 /**
  *
@@ -28,25 +28,19 @@ public class Client implements Signable {
     Socket socket = null;
     ObjectInputStream entrada = null;
     ObjectOutputStream salida = null;
+    Alert alert;
 
-    private static void cargarPuerto() {
-        Properties propiedades = new Properties();
+    // SING UP 
+    @Override
+    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral {
+
         try {
+            // cargar pyuerto
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
-    
+            String recogerPuerto = bundle.getString("PUERTO");
+            puerto = Integer.parseInt(recogerPuerto);
 
-    String puertoStr = bundle.getString("PUERTO");
-    puerto = Integer.parseInt(puertoStr);
-
-        } catch (NumberFormatException e) {
-            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 5600;
-        }
-    }
-
-    public void iniciar(Usuario usuario) throws ClassNotFoundException {
-
-        try {
+            // iniciar
             socket = new Socket(HOST, puerto);
 
             LOGGER.info("Conexion realizada con el servidor");
@@ -55,25 +49,84 @@ public class Client implements Signable {
 
             salida = new ObjectOutputStream(socket.getOutputStream());
 
-            salida.writeObject(usuario);
+            salida.writeObject(mensaje);
+            mensaje = (Mensaje) entrada.readObject();
+            System.out.println(mensaje.getRq());
 
+        } catch (NumberFormatException e) {
+            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
+            puerto = 16700;
         } catch (IOException e) {
-            LOGGER.severe("No se ha podido conectar con el servidor" + e.getMessage());
+            LOGGER.severe("No se ha podido conectar con el servidor");
+            throw new ErrorGeneral();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+
         } finally {
             finalizar();
         }
+
+        return mensaje;
     }
 
+    // SING IN 
     @Override
-    public void singUp(Usuario usuario) {
+    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente {
+
         try {
-            cargarPuerto();
-            iniciar(usuario);
-        } catch (ClassNotFoundException e) {
-            LOGGER.severe("Error en el registro de usuario" + e.getMessage());
+            // cargar pyuerto
+
+            ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
+            String recogerPuerto = bundle.getString("PUERTO");
+            puerto = Integer.parseInt(recogerPuerto);
+
+            // iniciar
+            socket = new Socket(HOST, puerto);
+
+            LOGGER.info("Conexion realizada con el servidor");
+
+            entrada = new ObjectInputStream(socket.getInputStream());
+
+            salida = new ObjectOutputStream(socket.getOutputStream());
+
+            salida.writeObject(mensaje);
+            mensaje = (Mensaje) entrada.readObject();
+            System.out.println(mensaje.getRq());
+            
+            switch(mensaje.getRq()) {
+                case SIGN_IN_EXITOSO:
+                    SignController.abrirVista();
+                    break;
+                case ERROR_GENERAL:
+                    throw new ErrorGeneral();
+                    
+                case USUARIO_NO_ACTIVO:
+                    throw new ErrorUsuarioNoActivo();
+                    
+                case USUARIO_INEXISTENTE:
+                    throw new ErrorUsuarioInexistente();
+                
+            }
+            
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ErrorGeneral();
+        } catch (NumberFormatException e) {
+            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
+            puerto = 16700;
+        } catch (IOException e) {
+            LOGGER.severe("No se ha podido conectar con el servidor");
+            throw new ErrorGeneral();
+
+        } finally {
+            finalizar();
         }
+        return mensaje;
     }
 
+    // METODO FINALIZAR QUE COMPARTE
     private void finalizar() {
         try {
             if (socket != null) {
@@ -86,7 +139,7 @@ public class Client implements Signable {
                 salida.close();
             }
         } catch (IOException e) {
-            LOGGER.severe("Error al intentar cerrar"+ e.getMessage());
+            LOGGER.severe("Error al intentar cerrar" + e.getMessage());
         }
     }
 

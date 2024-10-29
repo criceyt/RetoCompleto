@@ -1,5 +1,9 @@
 package userInterfaceTier;
 
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
+import java.io.IOException;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -12,13 +16,24 @@ import validations.ErrorHandler;
 import libreria.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import libreria.Mensaje;
+import libreria.Request;
 
 public class SignController {
 
@@ -247,15 +262,49 @@ public class SignController {
     private void handleLogin() {
         String email = usernameField.getText();
         String password = passwordField.getText();
+        List<String> errores = new ArrayList<>();
+
+        if (email.isEmpty() && password.isEmpty()) {
+            errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
+            return;
+        }
+
+        if (password.isEmpty()) {
+            errores.add("La contraseña no puede estar vacío.");
+        }
+
+        if (email.isEmpty()) {
+            errores.add("El email no puede estar vacío.");
+        }
+
+        if (!esCorreoValido(email)) {
+            errores.add("El correo electrónico no tiene un formato válido.");
+        }
+
+        if (!errores.isEmpty()) {
+            String mensajeErrores = String.join("\n", errores);
+            errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
+            return; // Salimos del método si hay errores
+        }
 
         try {
             // Autenticar usuario
             if (errorHandler.autenticar(email, password)) {
-                messageLabel.setText("¡Inicio de sesión exitoso!");
-                System.out.println("Usuario autenticado: " + email);
+                Usuario usuario = new Usuario(email, password);
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
+                Signable a = ClientFactory.getSignable();
+                a.signIn(mensaje);
+                //       messageLabel.setText("¡Inicio de sesión exitoso!");
+                //      System.out.println("Usuario autenticado: " + email);
             }
-        } catch (Exception e) {
-            errorHandler.handleGeneralException(e, messageLabel);
+        } catch (ErrorGeneral e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage() , ButtonType.OK).showAndWait();
+        } catch (ErrorUsuarioNoActivo ex) {
+            new Alert(Alert.AlertType.ERROR, ex.getMessage() , ButtonType.OK).showAndWait();
+        } catch (ErrorUsuarioInexistente ex) {
+            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -338,11 +387,12 @@ public class SignController {
         try {
             int codigoPostal = Integer.parseInt(codigoPostalTexto);
             errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
-            
+
             //messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
             Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
+            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
             Signable a = ClientFactory.getSignable();
-            a.singUp(usuario);
+            a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
@@ -413,4 +463,64 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
+    public static void abrirVista() {
+        try {
+            // Cargar el DOM de la vista FXML
+            Parent root = FXMLLoader.load(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
+
+            // Crear nueva escena
+            Scene scene = new Scene(root);
+
+            // Añadir el CSS por defecto (Oscuro)
+            scene.getStylesheets().add(SignController.class.getResource("/ui/stylesLogout_Oscuro.css").toExternalForm());
+
+            // Crear un menú contextual con las opciones de temas
+            ContextMenu themeMenu = createThemeMenu(scene);
+
+            // Añadir un listener para abrir el menú con clic derecho
+            root.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+                if (event.getButton() == MouseButton.SECONDARY) { // Clic derecho
+                    themeMenu.show(root, event.getScreenX(), event.getScreenY());
+                }
+            });
+
+            // Crear un nuevo stage
+            Stage stage = new Stage();
+            stage.setTitle("Ventana Sesion Iniciada");
+            stage.setWidth(900);
+            stage.setHeight(700);
+            stage.setScene(scene);
+
+            stage.showAndWait();
+
+        } catch (IOException ex) {
+            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static ContextMenu createThemeMenu(Scene scene) {
+        ContextMenu menu = new ContextMenu();
+
+        // Crear los elementos del menú para cada tema
+        MenuItem darkTheme = new MenuItem("Tema Oscuro");
+        MenuItem lightTheme = new MenuItem("Tema Claro");
+        MenuItem retroTheme = new MenuItem("Tema Retro");
+
+        // Añadir acciones a cada elemento del menú
+        darkTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Oscuro.css", scene));
+        lightTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Claro.css", scene));
+        retroTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Retro.css", scene));
+
+        // Añadir los elementos al menú
+        menu.getItems().addAll(darkTheme, lightTheme, retroTheme);
+
+        return menu;
+    }
+
+    // Método para cambiar el tema
+    private static void changeTheme(String themeFile, Scene scene) {
+        // Limpiar estilos actuales y cargar el nuevo CSS
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
+    }
 }

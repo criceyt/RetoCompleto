@@ -1,12 +1,19 @@
 package dataAccessTier;
 
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import libreria.Signable;
+import libreria.Mensaje;
+import libreria.Request;
+import static libreria.Request.SIGN_UP_REQUEST;
 import libreria.Usuario;
 
 /**
@@ -20,16 +27,17 @@ public class Worker implements Runnable {
     private final String clave = "abcd";
     ServerSocket server = null;
     Socket socket = null;
+    DAO dao = null;
     ObjectInputStream entrada = null;
     ObjectOutputStream salida = null;
     int numeroCliente;
     //Crear constructor para worker y que tenga un parametro socket y guardarlo en un atributo (socket)
 
-    public Worker(Socket socketCliente, int numeroCliente) {
+    Worker(Socket socketCliente, int numeroCliente, DAO dao) {
         this.socket = socketCliente;
         this.numeroCliente = numeroCliente;
+        this.dao = dao;
     }
-
 
     @Override
     public void run() {
@@ -39,13 +47,33 @@ public class Worker implements Runnable {
             entrada = new ObjectInputStream(socket.getInputStream());
 
             // Recibir el objeto Usuario enviado por el cliente
-            Usuario usuario = (Usuario) entrada.readObject();
-            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + usuario.getNombreyApellidos());
+            Mensaje mensaje = (Mensaje) entrada.readObject();
+            LOGGER.info("Usuario recibido del cliente " + numeroCliente + ": " + mensaje.getRq());
 
+           
             // Enviar una confirmación de recepción al cliente
-            salida.writeObject("Usuario recibido correctamente.");
+            
+            if(mensaje.getRq().equals(Request.SIGN_UP_REQUEST)) {
+                dao.singUp(mensaje);
+                salida.writeObject(mensaje);
+            } else {
+                try {     
+                    dao.signIn(mensaje);
+                } catch (ErrorGeneral ex) {
+                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje.setRq(Request.ERROR_GENERAL);
+                } catch (ErrorUsuarioNoActivo ex) {
+                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje.setRq(Request.USUARIO_NO_ACTIVO);
+                } catch (ErrorUsuarioInexistente ex) {
+                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje.setRq(Request.USUARIO_INEXISTENTE);
+                }
+                System.out.println("Mensaje recibido: " + mensaje.getRq());
+                salida.writeObject(mensaje);
+            }         
+             
 
-            ServerFactory.getSignable().singUp(usuario);
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.severe("Error al procesar el cliente " + numeroCliente + ": " + e.getMessage());
         } finally {
@@ -53,7 +81,7 @@ public class Worker implements Runnable {
             finalizar();
         }
     }
-    
+
     public void finalizar() {
         try {
             if (entrada != null) {
