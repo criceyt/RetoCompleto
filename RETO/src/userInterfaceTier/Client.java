@@ -1,5 +1,6 @@
 package userInterfaceTier;
 
+import excepciones.ErrorGeneral;
 import libreria.Signable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -90,7 +91,7 @@ public class Client implements Signable {
     }
 
     @Override
-    public Mensaje signIn(Mensaje mensaje) {
+    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral{
         try {
             cargarPuerto();
             iniciar(mensaje);

@@ -1,5 +1,6 @@
 package userInterfaceTier;
 
+import excepciones.ErrorGeneral;
 import java.io.IOException;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
@@ -19,7 +20,9 @@ import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -28,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import libreria.Mensaje;
 import libreria.Request;
+import ui.FXMLDashboardController;
 
 public class SignController {
 
@@ -288,12 +292,11 @@ public class SignController {
                 Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
                 Signable a = ClientFactory.getSignable();
                 a.signIn(mensaje);
-                                //       messageLabel.setText("¡Inicio de sesión exitoso!");
-                //      System.out.println("Usuario autenticado: " + email);
             }
         } catch (Exception e) {
-            errorHandler.handleGeneralException(e, messageLabel);
+            
         }
+       
     }
 
     @FXML
@@ -451,8 +454,32 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
-    public static void abrirVista() {
-        // Cargar el DOM de la vista FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/ui/FXMLDashboard.fxml"));
+public static void abrirVista() {
+    try {
+        FXMLLoader loader = new FXMLLoader(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
+        Parent root = loader.load();
+        
+        FXMLDashboardController controller = loader.getController();
+        
+        Scene scene = new Scene(root);
+        controller.setScene(scene); // Establecer la escena en el controlador
+        
+        // Cargar el CSS por defecto
+        controller.loadDefaultStyles();
+
+        Stage stage = new Stage();
+        stage.setTitle("Ventana Sesion Iniciada");
+        stage.setWidth(900);
+        stage.setHeight(700);
+        stage.setScene(scene);
+
+        stage.showAndWait();
+    } catch (IOException ex) {
+        Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
     }
+}
+
+
+
+    
 }

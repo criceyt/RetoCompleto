@@ -1,22 +1,36 @@
+/* Estilo para el contenedor raíz */
 .root {
-    -fx-background-image: url("/ui/fondoClaro.jpg"); /* Ruta a tu imagen de fondo claro */
+    -fx-background-image: url("/ui/fondoClaro.jpg"); /* Fondo claro */
     -fx-background-size: cover; /* Asegura que la imagen cubra todo el área */
     -fx-background-position: center; /* Centra la imagen */
     -fx-background-repeat: no-repeat; /* No repetir la imagen */
 }
 
-.button {
-    -fx-background-color: #dddddd; /* Color de fondo del botón */
-    -fx-text-fill: #333333; /* Color del texto del botón */
-    -fx-font-weight: bold; /* Negrita */
-    -fx-background-radius: 10; /* Bordes redondeados */
-    -fx-pref-width: 100; /* Ancho preferido del botón */
-    -fx-min-width: 100; /* Ancho mínimo del botón */
-    -fx-max-width: 120; /* Ancho máximo del botón */
+/* Estilos para el contenedor principal */
+.login-pane {
+    -fx-background-color: rgba(255, 255, 255, 0.9); /* Color de fondo claro */
+    -fx-padding: 20; /* Espaciado interno */
+    -fx-spacing: 10; /* Espaciado entre elementos */
+    -fx-border-radius: 15; /* Bordes redondeados */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 0); /* Efecto de sombra */
 }
 
-/* Efecto hover para el botón */
+/* Estilos para los botones */
+.button {
+    -fx-background-color: rgba(0, 150, 0, 0.8); /* Fondo verde claro */
+    -fx-text-fill: black; /* Texto negro */
+    -fx-font-weight: bold; /* Negrita */
+    -fx-background-radius: 10; /* Bordes redondeados */
+    -fx-border-color: #00FFFF; /* Borde cian */
+    -fx-border-width: 2; /* Ancho del borde */
+    -fx-pref-width: 100; /* Ancho preferido */
+    -fx-min-width: 100; /* Ancho mínimo */
+    -fx-max-width: 120; /* Ancho máximo */
+}
+
+/* Efecto hover para los botones */
 .button:hover {
-    -fx-background-color: #cccccc; /* Color de fondo al pasar el ratón */
-    -fx-text-fill: #333333; /* Color del texto al pasar el ratón */
+    -fx-background-color: rgba(0, 255, 255, 0.9); /* Color de fondo cian al pasar el ratón */
+    -fx-text-fill: black; /* Texto negro */
+    -fx-cursor: hand; /* Cambiar cursor a mano */
 }

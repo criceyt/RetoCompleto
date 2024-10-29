@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" fx:id="backgroundImage">
-    <Button fx:id="logoutButton" text="Log Out" styleClass="button" /> <!-- No se especifica layoutX ni layoutY -->
-</StackPane>
+<AnchorPane id="backgroundImage" xmlns:fx="http://javafx.com/fxml" fx:id="rootPane" fx:controller="ui.FXMLDashboardController" styleClass="root" stylesheets="@/ui/stylesLogout_Oscuro.css">
+    <Button fx:id="logoutButton" text="Log Out" styleClass="button" />
+</AnchorPane>
+
+

@@ -1,5 +1,6 @@
 package dataAccessTier;
 
+import excepciones.ErrorGeneral;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,8 +29,8 @@ public class DAO implements Signable {
     private final String altaParner = "INSERT INTO res_partner (company_id, name, email, street, city, zip) VALUES (1, ?, ?, ?, ?, ?)";
     private final String altaUsers = "INSERT INTO res_users (company_id, partner_id, login, password, active) VALUES (1, ?, ?, ?, ?)";
     private final String selectParnerId = "SELECT id FROM res_partner order by id desc limit 1";
-    private final String comprobarEmail = "SELECT email FROM res_partner WHERE email=?";
     private final String inicioSesion = "SELECT company_id, partner_id, login, password, active FROM res_users WHERE login=? AND password=?";
+    private final String comprobarEmailRegistrado = "SELECT COUNT(*) FROM res_users WHERE email = ?";
 
     public DAO() throws SQLException {
         this.pool = new PoolConexiones();
@@ -50,20 +51,20 @@ public class DAO implements Signable {
     }
 
     @Override
-    public synchronized Mensaje singUp(Mensaje mensaje) {
+    public synchronized Mensaje singUp(Mensaje mensaje) /*throws EmailRepetido*/{
 
         // Se inserta la Primera Parte que corresponde ALTA_PARTNER
         try {
             // Se abre conexion con postgres
             con = pool.getConnection();
 
-            stmt = con.prepareStatement(comprobarEmail);
+            stmt = con.prepareStatement(comprobarEmailRegistrado);
             stmt.setString(1, mensaje.getUser().getEmail());
             ResultSet rs;
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                //Correo repetido error
+                //throw EmailRepetido();
             } else {
                 stmt = con.prepareStatement(altaParner);
 
@@ -101,7 +102,7 @@ public class DAO implements Signable {
     }
 
     @Override
-    public synchronized Mensaje signIn(Mensaje mensaje) {
+    public synchronized Mensaje signIn(Mensaje mensaje) throws ErrorGeneral{
         String email = mensaje.getUser().getEmail();
         String password = mensaje.getUser().getPassword();
         ResultSet rs = null;
@@ -117,15 +118,22 @@ public class DAO implements Signable {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                mensaje.setRq(Request.SIGN_IN_EXITOSO); //Hay que cambiar esto porque no se asigna el sign in exitoso
+                
+                boolean isActive = rs.getBoolean("active");
+                
+                if(isActive){
+                    mensaje.setRq(Request.SIGN_IN_EXITOSO);
+                }else{
+                    mensaje.setRq(Request.USUARIO_NO_ACTIVO);
+                }
             } else {
-                System.out.println("ERROR: no coincide o no encontrado");
+                mensaje.setRq(Request.USUARIO_INEXISTENTE);
             }
 
             conexionRealizada();
 
         } catch (SQLException ex) {
-            System.out.println("SOMOS SUBNORMALES");
+            throw new ErrorGeneral();
         }
         return mensaje;
     }

@@ -1,5 +1,6 @@
 package libreria;
 
+import excepciones.ErrorGeneral;
 import libreria.Usuario;
 
 
@@ -12,6 +13,6 @@ public interface Signable {
 
     public Mensaje singUp(Mensaje mensaje);
 
-    public Mensaje signIn(Mensaje mensaje);
+    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral;
     
 }
