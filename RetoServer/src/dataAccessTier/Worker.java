@@ -5,13 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.logging.Level;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import libreria.Mensaje;
 import libreria.Request;
-import static libreria.Request.SIGN_UP_REQUEST;
-import libreria.Usuario;
 
 /**
  *
@@ -22,6 +19,8 @@ public class Worker implements Runnable {
     //private Signable signable;  pa q se usa
     private static final Logger LOGGER = Logger.getLogger(Worker.class.getName());
     private final String clave = "abcd";
+    AplicattionServer apServer;
+
     ServerSocket server = null;
     Socket socket = null;
     DAO dao = null;
@@ -58,6 +57,7 @@ public class Worker implements Runnable {
                 System.out.println("Mensaje recibido: " + mensaje.getRq());
                 salida.writeObject(mensaje);
             }         
+            apServer.decrementarClientes();
 
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.severe("Error al procesar el cliente " + numeroCliente + ": " + e.getMessage());
@@ -78,6 +78,10 @@ public class Worker implements Runnable {
             if (socket != null) {
                 socket.close();
             }
+            
+            
+            
+            
         } catch (IOException e) {
             LOGGER.severe("Error al cerrar recursos del cliente " + numeroCliente + ": " + e.getMessage());
         }

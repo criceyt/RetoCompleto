@@ -64,7 +64,11 @@ public class DAO implements Signable {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                //throw EmailRepetido();
+                int cuentaEmails = rs.getInt(1);
+                if(cuentaEmails > 0){
+                   //throw EmailRepetido();
+                }
+                
             } else {
                 stmt = con.prepareStatement(altaParner);
 
@@ -102,7 +106,7 @@ public class DAO implements Signable {
     }
 
     @Override
-    public synchronized Mensaje signIn(Mensaje mensaje) throws ErrorGeneral{
+    public synchronized Mensaje signIn(Mensaje mensaje) /*throws ErrorGeneral*/{
         String email = mensaje.getUser().getEmail();
         String password = mensaje.getUser().getPassword();
         ResultSet rs = null;
@@ -133,7 +137,7 @@ public class DAO implements Signable {
             conexionRealizada();
 
         } catch (SQLException ex) {
-            throw new ErrorGeneral();
+            //throw new ErrorGeneral();
         }
         return mensaje;
     }

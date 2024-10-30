@@ -29,6 +29,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import libreria.Mensaje;
 import libreria.Request;
 import ui.FXMLDashboardController;
@@ -294,9 +295,9 @@ public class SignController {
                 a.signIn(mensaje);
             }
         } catch (Exception e) {
-            
+
         }
-       
+
     }
 
     @FXML
@@ -454,32 +455,29 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
-public static void abrirVista() {
-    try {
-        FXMLLoader loader = new FXMLLoader(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
-        Parent root = loader.load();
-        
-        FXMLDashboardController controller = loader.getController();
-        
-        Scene scene = new Scene(root);
-        controller.setScene(scene); // Establecer la escena en el controlador
-        
-        // Cargar el CSS por defecto
-        controller.loadDefaultStyles();
+    public static void abrirVista() {
+        try {
+            FXMLLoader loader = new FXMLLoader(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
+            Parent root = loader.load();
 
-        Stage stage = new Stage();
-        stage.setTitle("Ventana Sesion Iniciada");
-        stage.setWidth(900);
-        stage.setHeight(700);
-        stage.setScene(scene);
+            FXMLDashboardController controller = loader.getController();
 
-        stage.showAndWait();
-    } catch (IOException ex) {
-        Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+            Scene scene = new Scene(root);
+            controller.setScene(scene); // Establecer la escena en el controlador
+
+            // Cargar el CSS por defecto
+            controller.loadDefaultStyles();
+
+            Stage stage = new Stage();
+            stage.setTitle("Ventana Sesion Iniciada");
+            stage.setWidth(900);
+            stage.setHeight(700);
+            stage.setScene(scene);
+
+            stage.showAndWait();
+        } catch (IOException ex) {
+            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-}
 
-
-
-    
 }
