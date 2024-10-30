@@ -1,25 +1,34 @@
 package libreria;
 
-
-
 import java.io.Serializable;
 
-public class Usuario implements Serializable{
+public class Usuario implements Serializable {
+
     private String email;     // Este será el nombre de usuario
     private String password;  // Contraseña
     private String nombreyApellidos;    // Nombre del usuario
     private String direccion;   // Apellido del usuario
     private String ciudad;
     private int codigoPostal;
+    private boolean estaActivo;
 
     // Constructor
-    public Usuario(String email, String password, String nombreyApellidos, String direccion, String ciudad, int codigoPostal) {
+    public Usuario(String email, String password, String nombreyApellidos, String direccion, String ciudad, int codigoPostal, boolean estaActivo) {
         this.email = email;
         this.password = password;
         this.nombreyApellidos = nombreyApellidos;
         this.direccion = direccion;
         this.ciudad = ciudad;
         this.codigoPostal = codigoPostal;
+        this.estaActivo = estaActivo;
+    }
+    
+    public Usuario(String email, String password){
+        this.email = email;
+        this.password = password;
+    }
+
+    public Usuario() {
     }
 
     // Getters y Setters
@@ -54,20 +63,28 @@ public class Usuario implements Serializable{
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
-    
-    public String getCiudad(){
-        return ciudad;        
+
+    public String getCiudad() {
+        return ciudad;
     }
-    
-    public void setCiudad(String ciudad){
+
+    public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
-    
-    public int getCodigoPostal(){
+
+    public int getCodigoPostal() {
         return codigoPostal;
     }
-    
-    public void setCodigoPostal(int codigoPostal){
+
+    public void setCodigoPostal(int codigoPostal) {
         this.codigoPostal = codigoPostal;
+    }
+
+    public boolean isEstaActivo() {
+        return estaActivo;
+    }
+
+    public void setEstaActivo(boolean estaActivo) {
+        this.estaActivo = estaActivo;
     }
 }

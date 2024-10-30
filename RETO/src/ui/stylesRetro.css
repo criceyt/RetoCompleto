@@ -14,7 +14,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.6), 15, 0, 0, 0); 
 }
 
-
 .text-title {
     -fx-fill: #FF77FF;
     -fx-font-size: 32px;
@@ -22,7 +21,6 @@
     -fx-font-family: 'Press Start 2P'; 
     -fx-effect: dropshadow(gaussian, rgba(255, 119, 255, 0.8), 5, 0, 0, 0); 
 }
-
 
 .label {
     -fx-text-fill: #00FFFF;
@@ -71,15 +69,18 @@
 .button:hover {
     -fx-background-color: rgba(0, 255, 255, 0.9); 
     -fx-text-fill: #000000; 
-    -fx-cursor: hand;
+    -fx-cursor: hand; /* Cambia el cursor al pasar sobre el botón */
 }
 
+/* Estilo de texto adicional */
 .text-black {
     -fx-fill: white;
 }
+
 .text-field:hover, .password-field:hover {
     -fx-border-color: #FF77FF; 
 }
+
 .custom-checkbox .text {
     -fx-fill: #AAAAAA; 
 }

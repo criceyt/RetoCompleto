@@ -3,6 +3,15 @@
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
 }
+.welcome-text {
+    -fx-font-size: 30px; /* Tamaño de la fuente */
+    -fx-font-weight: bold; /* Negrita */
+    -fx-text-fill: #FFD700; /* Color dorado */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 5, 0, 0, 1); /* Sombra para un efecto de profundidad */
+    -fx-padding: 10; /* Espaciado alrededor del texto */
+    -fx-background-color: rgba(0, 0, 0, 0.3); /* Fondo semi-transparente */
+    -fx-background-radius: 10; /* Esquinas redondeadas */
+}
 
 
 /* Estilos para el contenedor principal */
