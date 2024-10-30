@@ -98,6 +98,16 @@ public class SignController {
     @FXML
     private CheckBox activoCheckBox;
 
+    @FXML
+    private void showRegister() {
+        transitionToRegister();
+    }
+
+    @FXML
+    private void showLogin() {
+        transitionToLogin();
+    }
+
     private ContextMenu contextMenu;
     private boolean isDarkTheme = true;
     // Dependencia al ErrorHandler
@@ -106,6 +116,7 @@ public class SignController {
     // Constructor sin parámetros
     public SignController() {
     }
+
 
     @FXML
     public void initialize() {
@@ -117,6 +128,14 @@ public class SignController {
         MenuItem optionRetro = new MenuItem("Retro");
         contextMenu.getItems().addAll(optionLight, optionDark, optionRetro);
 
+        // Vincular acciones de los MenuItems
+        optionLight.setOnAction(e -> changeToLightTheme());
+        optionDark.setOnAction(e -> changeToDarkTheme());
+        optionRetro.setOnAction(e -> changeToRetroTheme());
+        
+        
+        
+        // Los dos metodos que sirven para que salgo el menu contextual en ambos desplegables
         loginPane.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 contextMenu.show(loginPane, event.getScreenX(), event.getScreenY());
@@ -129,11 +148,10 @@ public class SignController {
             }
         });
 
-        // Vincular acciones de los MenuItems
-        optionLight.setOnAction(e -> changeToLightTheme());
-        optionDark.setOnAction(e -> changeToDarkTheme());
-        optionRetro.setOnAction(e -> changeToRetroTheme());
+        
+        
 
+        // Mostrar password 
         passwordFieldParent = (HBox) passwordField.getParent();
         registerPasswordFieldParent = (HBox) registerPasswordField.getParent();
         confirmPasswordFieldParent = (HBox) confirmPasswordField.getParent();
@@ -226,38 +244,8 @@ public class SignController {
 
     }
 
-    private void changeToLightTheme() {
-        // Asegúrate de que loginPane tiene una escena antes de intentar acceder
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos existentes
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesClaro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
-    }
-
-    // Método para cambiar al tema oscuro
-    private void changeToDarkTheme() {
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos existentes
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
-    }
-
-    private void changeToRetroTheme() {
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos existentes
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesRetro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
-    }
-
+    
+    // Evento de Boton de Inicio de Sesion
     @FXML
     private void handleLogin() {
         String email = usernameField.getText();
@@ -297,17 +285,18 @@ public class SignController {
                 //       messageLabel.setText("¡Inicio de sesión exitoso!");
                 //      System.out.println("Usuario autenticado: " + email);
             }
-        } catch (ErrorGeneral e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage() , ButtonType.OK).showAndWait();
         } catch (ErrorUsuarioNoActivo ex) {
-            new Alert(Alert.AlertType.ERROR, ex.getMessage() , ButtonType.OK).showAndWait();
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorUsuarioInexistente ex) {
-            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
+        } catch (ErrorGeneral e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception ex) {
             Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    // Evento de Boton de Registrase
     @FXML
     private void handleRegister() {
 
@@ -394,6 +383,8 @@ public class SignController {
             Signable a = ClientFactory.getSignable();
             a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
+        } catch (ErrorGeneral ex) {
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
         }
@@ -410,16 +401,7 @@ public class SignController {
         confirmPasswordField.clear();
     }
 
-    @FXML
-    private void showRegister() {
-        transitionToRegister();
-    }
-
-    @FXML
-    private void showLogin() {
-        transitionToLogin();
-    }
-
+    // Metodo que cierra el SignIn y abre el SignUp
     private void transitionToRegister() {
         loginPane.setVisible(false);
         registerPane.setVisible(true);
@@ -435,6 +417,7 @@ public class SignController {
         messageTransition.play();
     }
 
+    // Metodo que cierra el SignUp y Abre el SignIn
     private void transitionToLogin() {
         registerPane.setVisible(false);
         loginPane.setVisible(true);
@@ -463,6 +446,7 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
+// Metodo para abrir la vista de Iniciode Sesion
     public static void abrirVista() {
         try {
             // Cargar el DOM de la vista FXML
@@ -498,10 +482,11 @@ public class SignController {
         }
     }
 
+    // CREACION DEL MENU CONTEXTUAL
     private static ContextMenu createThemeMenu(Scene scene) {
         ContextMenu menu = new ContextMenu();
 
-        // Crear los elementos del menú para cada tema
+        // Crear los elementos del menú para cada tema (nombres)
         MenuItem darkTheme = new MenuItem("Tema Oscuro");
         MenuItem lightTheme = new MenuItem("Tema Claro");
         MenuItem retroTheme = new MenuItem("Tema Retro");
@@ -514,6 +499,7 @@ public class SignController {
         // Añadir los elementos al menú
         menu.getItems().addAll(darkTheme, lightTheme, retroTheme);
 
+        // Retorna el menu
         return menu;
     }
 
@@ -522,5 +508,45 @@ public class SignController {
         // Limpiar estilos actuales y cargar el nuevo CSS
         scene.getStylesheets().clear();
         scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
+    }
+
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // METODOS PARA CAMBIAR LA ESCENA DE FONDO
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Meotodo para cambiar al tema Blanco
+    private void changeToLightTheme() {
+        // Asegúrate de que loginPane tiene una escena antes de intentar acceder
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesClaro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
+    }
+
+    // Método para cambiar al tema oscuro
+    private void changeToDarkTheme() {
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
+    }
+
+    // Método para cambiar al tema retro
+    private void changeToRetroTheme() {
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear(); // Limpiar estilos existentes
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesRetro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
     }
 }

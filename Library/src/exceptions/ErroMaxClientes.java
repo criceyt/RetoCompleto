@@ -9,8 +9,8 @@ package exceptions;
  *
  * @author 2dam
  */
-public class ErrorUsuarioInexistente extends Exception{
-    public ErrorUsuarioInexistente() {
-        super("Error: El usuario no ha sido encontrado (NO EXISTE)");
+public class ErroMaxClientes extends Exception{
+    public ErroMaxClientes() {
+        super("Error Se ha alcanzado el maximo de clientes que se pueden conectar");
     }
 }

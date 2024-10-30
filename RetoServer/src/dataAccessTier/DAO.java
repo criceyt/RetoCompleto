@@ -1,5 +1,6 @@
 package dataAccessTier;
 
+import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
@@ -54,7 +55,7 @@ public class DAO implements Signable {
     }
 
     @Override
-    public synchronized Mensaje singUp(Mensaje mensaje) {
+    public synchronized Mensaje singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral{
 
         // Se inserta la Primera Parte que corresponde ALTA_PARTNER
         try {
@@ -67,7 +68,7 @@ public class DAO implements Signable {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                //Correo repetido error
+                throw new ErrorCorreoExistente();
             } else {
                 stmt = con.prepareStatement(altaParner);
 
@@ -97,7 +98,7 @@ public class DAO implements Signable {
             }
 
         } catch (SQLException e) {
-            mensaje.setRq(Request.ERROR_GENERAL);
+            throw new ErrorGeneral();
         }
         return mensaje;
 

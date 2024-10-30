@@ -9,8 +9,8 @@ package exceptions;
  *
  * @author 2dam
  */
-public class ErrorUsuarioInexistente extends Exception{
-    public ErrorUsuarioInexistente() {
-        super("Error: El usuario no ha sido encontrado (NO EXISTE)");
+public class ErrorCorreoExistente extends Exception{
+    public ErrorCorreoExistente() {
+        super("Error el correo que quiere introducir esta ya registrado");
     }
 }

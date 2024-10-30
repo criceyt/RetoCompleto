@@ -8,8 +8,8 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="RetoCliente.jar" size="1068961" download="eager" />
-    <jar href="lib\Library.jar" size="7308" download="eager" />
+    <jar href="RetoCliente.jar" size="1066878" download="eager" />
+    <jar href="lib\Library.jar" size="7979" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="RetoCliente" >
     <param name="requiredFXVersion" value="8.0+"/>

@@ -1,5 +1,7 @@
 package userInterfaceTier;
 
+import exceptions.ErroMaxClientes;
+import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
@@ -11,8 +13,11 @@ import java.net.Socket;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import libreria.Mensaje;
 import libreria.Request;
 
@@ -32,7 +37,7 @@ public class Client implements Signable {
 
     // SING UP 
     @Override
-    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral {
+    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente {
 
         try {
             // cargar pyuerto
@@ -52,6 +57,15 @@ public class Client implements Signable {
             salida.writeObject(mensaje);
             mensaje = (Mensaje) entrada.readObject();
             System.out.println(mensaje.getRq());
+            
+            switch(mensaje.getRq()) {
+                case ERROR_GENERAL:
+                    throw new ErrorGeneral();
+                case ERROR_USUARIO_YA_EXISTE:
+                    throw new ErrorCorreoExistente();
+                    
+               
+            }
 
         } catch (NumberFormatException e) {
             LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
@@ -142,5 +156,4 @@ public class Client implements Signable {
             LOGGER.severe("Error al intentar cerrar" + e.getMessage());
         }
     }
-
 }
