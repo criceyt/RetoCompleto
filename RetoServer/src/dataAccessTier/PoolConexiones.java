@@ -37,6 +37,7 @@ public class PoolConexiones {
         try {
             fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
             databaseUrl = fichConf.getString("url");
+            //databaseUrl = fichConf.getString("urlCasa");
             userName = fichConf.getString("user");
             password = fichConf.getString("password");
         } catch (MissingResourceException e) {
@@ -51,6 +52,7 @@ public class PoolConexiones {
         try {
             fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
             databaseUrl = fichConf.getString("url");
+            //databaseUrl = fichConf.getString("urlCasa");
             userName = fichConf.getString("user");
             password = fichConf.getString("password");
         } catch (MissingResourceException e) {
@@ -184,23 +186,6 @@ public class PoolConexiones {
         }
     }
 
-    // Just an Example
-    public static void main(String[] args) throws SQLException {
-        PoolConexiones pool = new PoolConexiones(
-                "jdbc:postgresql://192.168.37.155:5432/OdooDB",
-                "odoo", "abcd*1234", 2);
-
-        try (Connection conn = pool.getConnection();
-                Statement statement = conn.createStatement()) {
-
-            ResultSet res = statement.executeQuery("SELECT table_name FROM information_schema.tables");
-            while (res.next()) {
-                String tblName = res.getString(1);
-                System.out.println(tblName);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    
 
 }

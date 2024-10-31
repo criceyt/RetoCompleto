@@ -24,6 +24,9 @@ public class Mensaje implements Serializable {
         this.user = user;
         this.rq = rq;
     }
+
+    public Mensaje() {
+    }
     
     // getters and setters
 

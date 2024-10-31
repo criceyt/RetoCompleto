@@ -1,7 +1,9 @@
 package libreria;
 
-import excepciones.ErrorGeneral;
-import libreria.Usuario;
+import exceptions.ErrorCorreoExistente;
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
 
 
 
@@ -11,8 +13,8 @@ import libreria.Usuario;
  */
 public interface Signable {
 
-    public Mensaje singUp(Mensaje mensaje);
+    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente;
 
-    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral;
+    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente;
     
 }

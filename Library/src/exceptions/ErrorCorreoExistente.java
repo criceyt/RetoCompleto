@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package excepciones;
+package exceptions;
 
 /**
  *
  * @author 2dam
  */
-public class EmailRepetido extends Exception {
-
-    public EmailRepetido() {
-        super("El usuario introducido esta repetido");
+public class ErrorCorreoExistente extends Exception{
+    public ErrorCorreoExistente() {
+        super("Error el correo que quiere introducir esta ya registrado");
     }
 }

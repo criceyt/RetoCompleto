@@ -3,6 +3,7 @@ package ui;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +13,8 @@ public class FXMLDashboardController {
 
     @FXML
     private AnchorPane rootPane;
+    
+    private Label bienvenido;
 
     private Scene scene;
 
@@ -20,7 +23,6 @@ public class FXMLDashboardController {
     }
 
     @FXML
-
     public void initialize() {
         System.out.println("Scene in initialize: " + scene);
 
@@ -46,6 +48,20 @@ public class FXMLDashboardController {
         lightTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Claro.css"));
         retroTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Retro.css"));
 
+        // Configuración para cerrar el menú después de seleccionar un tema
+        darkTheme.setOnAction(event -> {
+            changeTheme("/ui/stylesLogout_Oscuro.css");
+            menu.hide(); // Oculta el menú
+        });
+        lightTheme.setOnAction(event -> {
+            changeTheme("/ui/stylesLogout_Claro.css");
+            menu.hide(); // Oculta el menú
+        });
+        retroTheme.setOnAction(event -> {
+            changeTheme("/ui/stylesLogout_Retro.css");
+            menu.hide(); // Oculta el menú
+        });
+
         menu.getItems().addAll(darkTheme, lightTheme, retroTheme);
         return menu;
     }
@@ -56,14 +72,19 @@ public class FXMLDashboardController {
             String stylesheet = getClass().getResource(themeFile).toExternalForm();
             scene.getStylesheets().add(stylesheet);
 
-            // Actualizar el fondo basado en el tema
-            if (themeFile.equals("/ui/stylesLogout_Claro.css")) {
-                rootPane.setStyle("-fx-background-image: url('/ui/fondoClaro.jpg');");
-            } else if (themeFile.equals("/ui/stylesLogout_Oscuro.css")) {
-                rootPane.setStyle("-fx-background-image: url('/ui/fondo_(1).jpg');");
-            } else if (themeFile.equals("/ui/stylesLogout_Retro.css")) {
-                rootPane.setStyle("-fx-background-image: url('/ui/fondoRetro.jpg');");
+            String fondo = "";
+            switch (themeFile) {
+                case "/ui/stylesLogout_Claro.css":
+                    fondo = "/ui/fondoClaro.jpg";
+                    break;
+                case "/ui/stylesLogout_Oscuro.css":
+                    fondo = "/ui/fondo_(1).jpg";
+                    break;
+                case "/ui/stylesLogout_Retro.css":
+                    fondo = "/ui/fondoRetro.jpg";
+                    break;
             }
+            rootPane.setStyle("-fx-background-image: url('" + fondo + "');");
         } else {
             System.out.println("La escena es null");
         }
@@ -71,10 +92,9 @@ public class FXMLDashboardController {
 
     public void loadDefaultStyles() {
         if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos previos si los hay
-            String defaultStylesheet = getClass().getResource("/ui/stylesLogout_Oscuro.css").toExternalForm(); // Cambia a tu CSS por defecto
-            scene.getStylesheets().add(defaultStylesheet); // Agrega el CSS por defecto
+            scene.getStylesheets().clear();
+            String defaultStylesheet = getClass().getResource("/ui/stylesLogout_Oscuro.css").toExternalForm();
+            scene.getStylesheets().add(defaultStylesheet);
         }
     }
-
 }

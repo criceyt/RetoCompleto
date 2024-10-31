@@ -1,13 +1,14 @@
 package dataAccessTier;
 
-import excepciones.ErrorGeneral;
+import exceptions.ErrorCorreoExistente;
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import libreria.Mensaje;
 import libreria.Request;
 import libreria.Signable;
@@ -29,8 +30,9 @@ public class DAO implements Signable {
     private final String altaParner = "INSERT INTO res_partner (company_id, name, email, street, city, zip) VALUES (1, ?, ?, ?, ?, ?)";
     private final String altaUsers = "INSERT INTO res_users (company_id, partner_id, login, password, active) VALUES (1, ?, ?, ?, ?)";
     private final String selectParnerId = "SELECT id FROM res_partner order by id desc limit 1";
+    private final String comprobarEmail = "SELECT email FROM res_partner WHERE email=?";
     private final String inicioSesion = "SELECT company_id, partner_id, login, password, active FROM res_users WHERE login=? AND password=?";
-    private final String comprobarEmailRegistrado = "SELECT COUNT(*) FROM res_users WHERE email = ?";
+    private final String estaActivo = "SELECT active FROM res_users WHERE login=? AND password=?";
 
     public DAO() throws SQLException {
         this.pool = new PoolConexiones();
@@ -49,26 +51,62 @@ public class DAO implements Signable {
             e.printStackTrace();
         }
     }
+    
 
     @Override
-    public synchronized Mensaje singUp(Mensaje mensaje) /*throws EmailRepetido*/{
+    public synchronized Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente{
+        String email = mensaje.getUser().getEmail();
+        String password = mensaje.getUser().getPassword();
+        ResultSet rs = null;
+        try {
+            con = pool.getConnection();
+
+           stmt = con.prepareStatement(inicioSesion);
+
+            stmt.setString(1, email);
+
+            stmt.setString(2, password);
+
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+               
+                 boolean isActive = rs.getBoolean("active");
+                 
+                 if(isActive) {
+                     mensaje.setRq(Request.SIGN_IN_EXITOSO); //Hay que cambiar esto porque no se asigna el sign in exitoso
+                 } else {
+                     System.out.println("El usuario no esta activo");
+                     throw new ErrorUsuarioNoActivo();
+                 }
+            } else {
+                System.out.println("ERROR: no coincide o no encontrado");
+                throw new ErrorUsuarioInexistente();
+            }
+
+            conexionRealizada();
+
+        } catch (SQLException ex) {
+            throw new ErrorGeneral();
+        } 
+        return mensaje;
+    }
+
+    @Override
+    public synchronized Mensaje singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral{
 
         // Se inserta la Primera Parte que corresponde ALTA_PARTNER
         try {
             // Se abre conexion con postgres
             con = pool.getConnection();
 
-            stmt = con.prepareStatement(comprobarEmailRegistrado);
+            stmt = con.prepareStatement(comprobarEmail);
             stmt.setString(1, mensaje.getUser().getEmail());
             ResultSet rs;
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                int cuentaEmails = rs.getInt(1);
-                if(cuentaEmails > 0){
-                   //throw EmailRepetido();
-                }
-                
+                throw new ErrorCorreoExistente();
             } else {
                 stmt = con.prepareStatement(altaParner);
 
@@ -98,47 +136,9 @@ public class DAO implements Signable {
             }
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new ErrorGeneral();
         }
         return mensaje;
 
-    }
-
-    @Override
-    public synchronized Mensaje signIn(Mensaje mensaje) /*throws ErrorGeneral*/{
-        String email = mensaje.getUser().getEmail();
-        String password = mensaje.getUser().getPassword();
-        ResultSet rs = null;
-        try {
-            con = pool.getConnection();           
-
-            stmt = con.prepareStatement(inicioSesion);
-            
-            stmt.setString(1, email);
-
-            stmt.setString(2, password);
-
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                
-                boolean isActive = rs.getBoolean("active");
-                
-                if(isActive){
-                    mensaje.setRq(Request.SIGN_IN_EXITOSO);
-                }else{
-                    mensaje.setRq(Request.USUARIO_NO_ACTIVO);
-                }
-            } else {
-                mensaje.setRq(Request.USUARIO_INEXISTENTE);
-            }
-
-            conexionRealizada();
-
-        } catch (SQLException ex) {
-            //throw new ErrorGeneral();
-        }
-        return mensaje;
     }
 }
