@@ -36,8 +36,8 @@ public class PoolConexiones {
             String password, int maxSize) throws SQLException {
         try {
             fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
-            //databaseUrl = fichConf.getString("url");
-            databaseUrl = fichConf.getString("urlCasa");
+            databaseUrl = fichConf.getString("url");
+            //databaseUrl = fichConf.getString("urlCasa");
             userName = fichConf.getString("user");
             password = fichConf.getString("password");
         } catch (MissingResourceException e) {
@@ -51,8 +51,8 @@ public class PoolConexiones {
     public PoolConexiones() throws SQLException {
         try {
             fichConf = ResourceBundle.getBundle("dataAccessTier.conexion");
-            //databaseUrl = fichConf.getString("url");
-            databaseUrl = fichConf.getString("urlCasa");
+            databaseUrl = fichConf.getString("url");
+            //databaseUrl = fichConf.getString("urlCasa");
             userName = fichConf.getString("user");
             password = fichConf.getString("password");
         } catch (MissingResourceException e) {

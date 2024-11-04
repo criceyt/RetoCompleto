@@ -1,5 +1,6 @@
 package dataAccessTier;
 
+import exceptions.ErrorMaxClientes;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -25,11 +26,12 @@ public class AplicattionServer {
     private static Socket socketCliente = null;
     private static ObjectOutputStream salida;
     private static Mensaje mensaje = null;
-    private static volatile boolean running = true; // Bandera para controlar el estado del servidor
+    private static volatile boolean running = true; // Para controlar el estado del servidor
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ErrorMaxClientes {
         cargarPuerto();
         try {
+            System.out.println("Para cerrar el servidor, escriba 'cerrar' ");
             iniciar();
         } catch (IOException ex) {
             Logger.getLogger(AplicattionServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -38,12 +40,12 @@ public class AplicattionServer {
         }
     }
 
-    private static void iniciar() throws IOException, SQLException {
+    private static void iniciar() throws IOException, SQLException, ErrorMaxClientes {
 
         // Iniciar el hilo para escuchar comandos
         new Thread(AplicattionServer::escucharComandos).start();
 
-        serverSocket = new ServerSocket(puerto); // Aquí no usamos try-with-resources
+        serverSocket = new ServerSocket(puerto); 
         DAO dao = (DAO) ServerFactory.getSignable();
         mensaje = new Mensaje();
 
@@ -112,9 +114,9 @@ public class AplicattionServer {
         return Integer.valueOf(recogerMaxCon);
     }
 
-    public synchronized void decrementarClientes() {
+    public static synchronized void decrementarClientes() {
         numeroClientesConectados--;
-        LOGGER.info("Número de clientes conectados: " + numeroClientesConectados);
+        LOGGER.info("Número de clientes conectados: " + numeroClientesConectados + 1 );
     }
 
     private static void cargarPuerto() {

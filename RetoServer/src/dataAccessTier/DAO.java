@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import libreria.Mensaje;
 import libreria.Request;
 import libreria.Signable;
+import libreria.Usuario;
 
 public class DAO implements Signable {
 
@@ -54,7 +55,7 @@ public class DAO implements Signable {
     
 
     @Override
-    public synchronized Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente{
+    public synchronized Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente{
         String email = mensaje.getUser().getEmail();
         String password = mensaje.getUser().getPassword();
         ResultSet rs = null;
@@ -89,11 +90,11 @@ public class DAO implements Signable {
         } catch (SQLException ex) {
             throw new ErrorGeneral();
         } 
-        return mensaje;
+        return mensaje.getUser();
     }
 
     @Override
-    public synchronized Mensaje singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral{
+    public synchronized Usuario singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral{
 
         // Se inserta la Primera Parte que corresponde ALTA_PARTNER
         try {
@@ -138,7 +139,7 @@ public class DAO implements Signable {
         } catch (SQLException e) {
             throw new ErrorGeneral();
         }
-        return mensaje;
+        return mensaje.getUser();
 
     }
 }

@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane id="backgroundImage" xmlns:fx="http://javafx.com/fxml" fx:id="rootPane" fx:controller="ui.FXMLDashboardController" styleClass="root" stylesheets="@/ui/stylesLogout_Oscuro.css">
+<AnchorPane id="backgroundImage" xmlns:fx="http://javafx.com/fxml" fx:id="rootPane" fx:controller="userInterfaceTier.FXMLDashboardController" styleClass="root">
     <VBox alignment="CENTER" spacing="20" AnchorPane.topAnchor="50" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <Label fx:id="bienvenido" text="Bienvenido" styleClass="welcome-text" />
 

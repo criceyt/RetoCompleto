@@ -1,10 +1,14 @@
 package userInterfaceTier;
 
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 /**
@@ -33,7 +37,30 @@ public class ApplicationClient extends javafx.application.Application {
         
        
         stage.setScene(scene);
+        
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                event.consume(); // Evita que la ventana se cierre inmediatamente
+                mostrarConfirmacionCerrar(stage);
+            }
+        });
+        
+        
         stage.show();
+    }
+    
+    private void mostrarConfirmacionCerrar(Stage stage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar Cierre");
+        alert.setHeaderText("¿Estás seguro de que quieres cerrar?");
+        alert.setContentText("Se perderán los cambios no guardados.");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                stage.close(); // Cierra la ventana si el usuario confirma
+            }
+        });
     }
 
     public static void main(String[] args) {

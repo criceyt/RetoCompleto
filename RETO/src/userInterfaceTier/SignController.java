@@ -1,6 +1,7 @@
 package userInterfaceTier;
 
 import exceptions.ErrorGeneral;
+import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
 import java.io.IOException;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -37,7 +37,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import libreria.Mensaje;
 import libreria.Request;
-import ui.FXMLDashboardController;
 
 public class SignController {
 
@@ -261,6 +260,7 @@ public class SignController {
                 Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
                 Signable a = ClientFactory.getSignable();
                 a.signIn(mensaje);
+                abrirVista();
                 //       messageLabel.setText("¡Inicio de sesión exitoso!");
                 //      System.out.println("Usuario autenticado: " + email);
             }
@@ -268,6 +268,8 @@ public class SignController {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorUsuarioInexistente ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
+        } catch (ErrorMaxClientes e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception ex) {
@@ -362,6 +364,8 @@ public class SignController {
             Signable a = ClientFactory.getSignable();
             a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
+        } catch (ErrorMaxClientes e) {
+            new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception e) {
@@ -437,17 +441,9 @@ public class SignController {
             controller.setScene(scene);
             // Añadir el CSS por defecto (Oscuro)
             scene.getStylesheets().add(SignController.class.getResource("/ui/stylesLogout_Oscuro.css").toExternalForm());
-
-            // Crear un menú contextual con las opciones de temas
-            ContextMenu themeMenu = createThemeMenu(scene);
-
-            // Añadir un listener para abrir el menú con clic derecho
-            root.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-                if (event.getButton() == MouseButton.SECONDARY) { // Clic derecho
-                    themeMenu.show(root, event.getScreenX(), event.getScreenY());
-                }
-            });
+            
             controller.loadDefaultStyles();
+            controller.init();
             // Crear un nuevo stage
             Stage stage = new Stage();
             stage.setTitle("Ventana Sesion Iniciada");
@@ -456,6 +452,7 @@ public class SignController {
             stage.setScene(scene);
 
             stage.initModality(Modality.APPLICATION_MODAL);// Bloquea la ventana previa
+
             stage.showAndWait();
 
         } catch (IOException ex) {

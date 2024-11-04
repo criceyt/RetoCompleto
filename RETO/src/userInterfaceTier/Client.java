@@ -2,6 +2,7 @@ package userInterfaceTier;
 
 import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
+import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
 import libreria.Signable;
@@ -18,6 +19,7 @@ import static libreria.Request.ERROR_GENERAL;
 import static libreria.Request.SIGN_IN_EXITOSO;
 import static libreria.Request.USUARIO_INEXISTENTE;
 import static libreria.Request.USUARIO_NO_ACTIVO;
+import libreria.Usuario;
 
 /**
  *
@@ -35,7 +37,7 @@ public class Client implements Signable {
 
     // SING UP 
     @Override
-    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente {
+    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes {
 
         try {
             // cargar puerto
@@ -61,6 +63,8 @@ public class Client implements Signable {
                     throw new ErrorGeneral();
                 case ERROR_USUARIO_YA_EXISTE:
                     throw new ErrorCorreoExistente();
+                case ERROR_MAX_CLIENTES:
+                    throw new ErrorMaxClientes();
             }
 
         } catch (NumberFormatException e) {
@@ -76,12 +80,12 @@ public class Client implements Signable {
             finalizar();
         }
 
-        return mensaje;
+        return mensaje.getUser();
     }
 
     // SING IN 
     @Override
-    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente {
+    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes {
 
         try {
             // cargar puerto
@@ -105,7 +109,7 @@ public class Client implements Signable {
 
             switch (mensaje.getRq()) {
                 case SIGN_IN_EXITOSO:
-                    SignController.abrirVista();
+                    //SignController.abrirVista();
                     break;
                 case ERROR_GENERAL:
                     throw new ErrorGeneral();
@@ -115,6 +119,8 @@ public class Client implements Signable {
 
                 case USUARIO_INEXISTENTE:
                     throw new ErrorUsuarioInexistente();
+                case ERROR_MAX_CLIENTES:
+                    throw new ErrorMaxClientes();
 
             }
 
@@ -129,7 +135,7 @@ public class Client implements Signable {
         } finally {
             finalizar();
         }
-        return mensaje;
+        return mensaje.getUser();
     }
 
     // METODO FINALIZAR QUE COMPARTE

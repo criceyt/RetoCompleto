@@ -1,5 +1,6 @@
 package dataAccessTier;
 
+import static dataAccessTier.AplicattionServer.decrementarClientes;
 import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
 import exceptions.ErrorUsuarioInexistente;
@@ -81,7 +82,7 @@ public class Worker implements Runnable {
         } finally {
             // Cerrar el socket y los streams
             finalizar();
-            //apServer.decrementarClientes();
+            decrementarClientes();
         }
     }
 
