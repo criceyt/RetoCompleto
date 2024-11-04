@@ -2,18 +2,23 @@ package ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 public class FXMLDashboardController {
 
     @FXML
     private AnchorPane rootPane;
-    
+
+    @FXML
+    private Button logoutButton;
+
     private Label bienvenido;
 
     private Scene scene;
@@ -24,7 +29,6 @@ public class FXMLDashboardController {
 
     @FXML
     public void initialize() {
-        System.out.println("Scene in initialize: " + scene);
 
         // Crear y configurar el menú contextual
         ContextMenu themeMenu = createThemeMenu();
@@ -34,6 +38,13 @@ public class FXMLDashboardController {
                 themeMenu.show(rootPane, event.getScreenX(), event.getScreenY());
             }
         });
+
+        logoutButton.setOnAction(this::handleLogoutButtonAction);
+
+    }
+
+    private void handleLogoutButtonAction(javafx.event.ActionEvent event) {
+        closeWindow(); // Cerrar la ventana
     }
 
     private ContextMenu createThemeMenu() {
@@ -96,5 +107,11 @@ public class FXMLDashboardController {
             String defaultStylesheet = getClass().getResource("/ui/stylesLogout_Oscuro.css").toExternalForm();
             scene.getStylesheets().add(defaultStylesheet);
         }
+    }
+
+    private void closeWindow() {
+        // Obtiene el Stage actual desde cualquier nodo, en este caso, rootPane
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.close(); // Cierra la ventana
     }
 }

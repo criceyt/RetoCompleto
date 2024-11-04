@@ -1,11 +1,12 @@
 package dataAccessTier;
 
-import exceptions.ErrorMaxClientes;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import libreria.Mensaje;
@@ -24,6 +25,7 @@ public class AplicattionServer {
     private static Socket socketCliente = null;
     private static ObjectOutputStream salida;
     private static Mensaje mensaje = null;
+    private static volatile boolean running = true; // Bandera para controlar el estado del servidor
 
     public static void main(String[] args) {
         cargarPuerto();
@@ -31,39 +33,67 @@ public class AplicattionServer {
             iniciar();
         } catch (IOException ex) {
             Logger.getLogger(AplicattionServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AplicattionServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private static void iniciar() throws IOException {
+    private static void iniciar() throws IOException, SQLException {
 
-        try (ServerSocket serverSocket = new ServerSocket(puerto)) {
-            DAO dao = (DAO) ServerFactory.getSignable();
-            mensaje = new Mensaje();
-            while (true) {
-                LOGGER.info("Esperando conexion del cliente " + numeroClientesConectados + 1);
+        // Iniciar el hilo para escuchar comandos
+        new Thread(AplicattionServer::escucharComandos).start();
+
+        serverSocket = new ServerSocket(puerto); // Aquí no usamos try-with-resources
+        DAO dao = (DAO) ServerFactory.getSignable();
+        mensaje = new Mensaje();
+
+        while (running) {
+            try {
+                LOGGER.info("Esperando conexión del cliente " + (numeroClientesConectados + 1));
                 Socket socketCliente = serverSocket.accept();
-                salida = new ObjectOutputStream(socketCliente.getOutputStream());
-                LOGGER.info("Cliente " + numeroClientesConectados + 1 + " conectado");
+                ObjectOutputStream salida = new ObjectOutputStream(socketCliente.getOutputStream());
+                LOGGER.info("Cliente " + (numeroClientesConectados + 1) + " conectado");
                 if (numeroClientesConectados < getMaxCon()) {
                     Worker worker = new Worker(socketCliente, salida, dao);
                     new Thread(worker).start();
                     numeroClientesConectados++;
                 } else {
                     mensaje.setRq(Request.ERROR_MAX_CLIENTES);
-                    throw new ErrorMaxClientes();
+                    salida.writeObject(mensaje);
+                    socketCliente.close(); // Cerrar conexión si hay demasiados clientes
+                }
+            } catch (IOException e) {
+                if (!running) {
+                    LOGGER.info("El servidor se cerró y no se aceptan más conexiones.");
+                } else {
+                    LOGGER.severe("Error en el socket del servidor: " + e.getMessage());
                 }
             }
-        } catch (ErrorMaxClientes e) {
-            salida.writeObject(mensaje);         
+        }
+
+        finalizar(); // Asegúrate de cerrar el servidor si se sale del bucle
+    }
+
+    private static void escucharComandos() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                String comando = scanner.nextLine();
+                if ("cerrar".equalsIgnoreCase(comando)) {
+                    finalizar(); // Llamar al método para cerrar el servidor
+                    break; // Salir del bucle
+                }
+            }
         } catch (Exception e) {
-            LOGGER.severe("Fallo al intentar crear el socket del servidor" + e.getMessage());
+            LOGGER.severe("Error al escuchar comandos: " + e.getMessage());
         }
     }
 
-    public void finalizar() {
+    public static void finalizar() {
+        running = false;
         try {
-            if (serverSocket != null) {
+            if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
+                LOGGER.info("Servidor cerrado correctamente.");
             }
 
             if (socketCliente != null) {

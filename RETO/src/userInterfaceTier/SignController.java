@@ -33,6 +33,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import libreria.Mensaje;
 import libreria.Request;
@@ -454,6 +455,7 @@ public class SignController {
             stage.setHeight(700);
             stage.setScene(scene);
 
+            stage.initModality(Modality.APPLICATION_MODAL);// Bloquea la ventana previa
             stage.showAndWait();
 
         } catch (IOException ex) {
