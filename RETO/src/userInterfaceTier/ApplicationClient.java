@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  *
  * @author Ekain
  */
-public class Application extends javafx.application.Application {
+public class ApplicationClient extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) throws Exception {

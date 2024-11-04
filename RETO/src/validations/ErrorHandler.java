@@ -29,17 +29,11 @@ public class ErrorHandler {
             throw new Exception("El correo electrónico no tiene un formato válido.");
         }
 
-        // Validación: Usuario no encontrado
-        if (!usuariosRegistrados.containsKey(email)) {
-            throw new Exception("Usuario no encontrado.");
-        }
+
 
         Usuario usuario = usuariosRegistrados.get(email);
 
-        // Validación: Contraseña incorrecta
-        if (!usuario.getPassword().equals(password)) {
-            throw new Exception("Contraseña incorrecta.");
-        }
+
 
         return true;
     }

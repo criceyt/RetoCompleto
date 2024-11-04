@@ -1,5 +1,9 @@
 package userInterfaceTier;
 
+import exceptions.ErrorCorreoExistente;
+import exceptions.ErrorGeneral;
+import exceptions.ErrorUsuarioInexistente;
+import exceptions.ErrorUsuarioNoActivo;
 import libreria.Signable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,7 +12,12 @@ import java.net.Socket;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import libreria.Mensaje;
+import static libreria.Request.ERROR_GENERAL;
+import static libreria.Request.SIGN_IN_EXITOSO;
+import static libreria.Request.USUARIO_INEXISTENTE;
+import static libreria.Request.USUARIO_NO_ACTIVO;
 
 /**
  *
@@ -22,22 +31,19 @@ public class Client implements Signable {
     Socket socket = null;
     ObjectInputStream entrada = null;
     ObjectOutputStream salida = null;
+    Alert alert;
 
-    private static void cargarPuerto() {
+    // SING UP 
+    @Override
+    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente {
+
         try {
+            // cargar puerto
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
             String recogerPuerto = bundle.getString("PUERTO");
             puerto = Integer.parseInt(recogerPuerto);
 
-        } catch (NumberFormatException e) {
-            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 16700;
-        }
-    }
-
-    public void iniciar(Mensaje mensaje) throws ClassNotFoundException {
-
-        try {
+            // iniciar
             socket = new Socket(HOST, puerto);
 
             LOGGER.info("Conexion realizada con el servidor");
@@ -47,25 +53,87 @@ public class Client implements Signable {
             salida = new ObjectOutputStream(socket.getOutputStream());
 
             salida.writeObject(mensaje);
+            mensaje = (Mensaje) entrada.readObject();
+            System.out.println(mensaje.getRq());
 
+            switch (mensaje.getRq()) {
+                case ERROR_GENERAL:
+                    throw new ErrorGeneral();
+                case ERROR_USUARIO_YA_EXISTE:
+                    throw new ErrorCorreoExistente();
+            }
+
+        } catch (NumberFormatException e) {
+            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
         } catch (IOException e) {
-            LOGGER.severe("No se ha podido conectar con el servidor" + e.getMessage());
+            LOGGER.severe("No se ha podido conectar con el servidor");
+            throw new ErrorGeneral();
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+
         } finally {
             finalizar();
         }
+
+        return mensaje;
     }
 
+    // SING IN 
     @Override
-    public void singUp(Mensaje mensaje) {
+    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente {
+
         try {
-            cargarPuerto();
-            iniciar(mensaje);
-        } catch (ClassNotFoundException e) {
-            LOGGER.severe("Error en el registro de usuario" + e.getMessage());
+            // cargar puerto
+
+            ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
+            String recogerPuerto = bundle.getString("PUERTO");
+            puerto = Integer.parseInt(recogerPuerto);
+
+            // iniciar
+            socket = new Socket(HOST, puerto);
+
+            LOGGER.info("Conexion realizada con el servidor");
+
+            entrada = new ObjectInputStream(socket.getInputStream());
+
+            salida = new ObjectOutputStream(socket.getOutputStream());
+
+            salida.writeObject(mensaje);
+            mensaje = (Mensaje) entrada.readObject();
+            System.out.println(mensaje.getRq());
+
+            switch (mensaje.getRq()) {
+                case SIGN_IN_EXITOSO:
+                    //SignController.abrirVista();
+                    break;
+                case ERROR_GENERAL:
+                    throw new ErrorGeneral();
+
+                case USUARIO_NO_ACTIVO:
+                    throw new ErrorUsuarioNoActivo();
+
+                case USUARIO_INEXISTENTE:
+                    throw new ErrorUsuarioInexistente();
+
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ErrorGeneral();
+        } catch (NumberFormatException e) {
+            LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
+        } catch (IOException e) {
+            LOGGER.severe("No se ha podido conectar con el servidor, hilos ocupados");
+            throw new ErrorGeneral();
+        } finally {
+            finalizar();
         }
+        return mensaje;
     }
 
-     private void finalizar() {
+    // METODO FINALIZAR QUE COMPARTE
+    private void finalizar() {
         try {
             if (socket != null) {
                 socket.close();
@@ -80,15 +148,4 @@ public class Client implements Signable {
             LOGGER.severe("Error al intentar cerrar" + e.getMessage());
         }
     }
-
-    @Override
-    public void signIn(Mensaje mensaje) {
-        try {
-            cargarPuerto();
-            iniciar(mensaje);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
 }
