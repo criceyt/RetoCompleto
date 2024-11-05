@@ -50,9 +50,7 @@ public class ErrorHandler {
         }
 
         // Validación: Usuario ya existente
-        if (usuariosRegistrados.containsKey(email)) {
-            throw new Exception("El usuario ya existe.");
-        }
+       
 
         // Validación: Contraseñas coinciden
         if (!password.equals(confirmPassword)) {

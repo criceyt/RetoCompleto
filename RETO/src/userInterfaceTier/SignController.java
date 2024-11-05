@@ -362,6 +362,8 @@ public class SignController {
             Signable a = ClientFactory.getSignable();
             a.singUp(mensaje); //Hay que cambiar el nombre a signUp
             limpiarCamposRegistro();
+        }  catch (ErrorUsuarioInexistente ex) {
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception e) {
