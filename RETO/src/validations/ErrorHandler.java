@@ -49,11 +49,6 @@ public class ErrorHandler {
             throw new Exception("El correo electrónico no tiene un formato válido.");
         }
 
-        // Validación: Usuario ya existente
-        if (usuariosRegistrados.containsKey(email)) {
-            throw new Exception("El usuario ya existe.");
-        }
-
         // Validación: Contraseñas coinciden
         if (!password.equals(confirmPassword)) {
             throw new Exception("Las contraseñas no coinciden.");
@@ -111,10 +106,4 @@ public class ErrorHandler {
         return password.matches(passwordRegex);
     }
 
-
-    /**
-     * Método para validar y registrar un nuevo usuario. Verifica todos los
-     * campos, formato del correo, fortaleza de la contraseña, y si el usuario
-     * ya existe.
-     */
 }

@@ -22,7 +22,11 @@ import static libreria.Request.USUARIO_NO_ACTIVO;
 import libreria.Usuario;
 
 /**
- *
+ * Clase que implementa la interfaz {@link Signable} para gestionar el
+ * inicio de sesión y el registro de usuarios a través de un socket.
+ * Esta clase maneja la comunicación con un servidor remoto para
+ * autenticar a los usuarios y registrar nuevos usuarios.
+ * 
  * @author gorka
  */
 public class Client implements Signable {
@@ -35,7 +39,15 @@ public class Client implements Signable {
     ObjectOutputStream salida = null;
     Alert alert;
 
-    // SING UP 
+    /**
+     * Registra un nuevo usuario.
+     * 
+     * @param mensaje objeto que contiene la información del usuario a registrar.
+     * @return el usuario registrado.
+     * @throws ErrorGeneral si ocurre un error general durante el registro.
+     * @throws ErrorCorreoExistente si el correo ya está asociado a un usuario existente.
+     * @throws ErrorMaxClientes si se ha alcanzado el número máximo de clientes permitidos.
+     */
     @Override
     public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes {
 
@@ -83,7 +95,16 @@ public class Client implements Signable {
         return mensaje.getUser();
     }
 
-    // SING IN 
+    /**
+     * Inicia sesión de un usuario.
+     * 
+     * @param mensaje objeto que contiene la información del usuario para iniciar sesión.
+     * @return el usuario autenticado.
+     * @throws ErrorGeneral si ocurre un error general durante el inicio de sesión.
+     * @throws ErrorUsuarioNoActivo si el usuario no está activo.
+     * @throws ErrorUsuarioInexistente si el usuario no existe.
+     * @throws ErrorMaxClientes si se ha alcanzado el número máximo de clientes permitidos.
+     */
     @Override
     public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes {
 
@@ -138,7 +159,9 @@ public class Client implements Signable {
         return mensaje.getUser();
     }
 
-    // METODO FINALIZAR QUE COMPARTE
+    /**
+     * Cierra la conexión con el servidor y libera los recursos utilizados.
+     */
     private void finalizar() {
         try {
             if (socket != null) {

@@ -38,46 +38,43 @@ import javafx.stage.Stage;
 import libreria.Mensaje;
 import libreria.Request;
 
+/**
+ * Controlador para el inicio de sesión y registro de usuarios. Este controlador
+ * gestiona la lógica de la interfaz gráfica de usuario para el inicio de sesión
+ * y el registro, incluidos los cambios de tema, la visibilidad de las
+ * contraseñas y la gestión de errores.
+ * @author Ekain
+ * @author Gorka
+ * @author Oier
+ */
 public class SignController {
 
     @FXML
     private VBox loginPane;
     @FXML
     private VBox registerPane;
-
     @FXML
     private Label messageLabel;
-
     @FXML
     private VBox messagePane;
-
     @FXML
     private TextField usernameField;
-
     @FXML
     private PasswordField passwordField;
-
     @FXML
     private TextField nombreyApellidoField;
-
     @FXML
     private PasswordField registerPasswordField;
-
     @FXML
     private TextField ciudadField;
-
     @FXML
     private TextField codigoPostalField;
-
     @FXML
     private TextField direccionField;
-
     @FXML
     private TextField emailField;
-
     @FXML
     private Button revealButton;
-
     @FXML
     private Button revealRegisterButton;
     @FXML
@@ -101,28 +98,58 @@ public class SignController {
     @FXML
     private CheckBox activoCheckBox;
 
+    /**
+     * Muestra la vista de registro y oculta la vista de inicio de sesión.
+     */
     @FXML
     private void showRegister() {
-        transitionToRegister();
+        loginPane.setVisible(false);
+        registerPane.setVisible(true);
+        registerPane.setTranslateX(loginPane.getWidth());
+
+        TranslateTransition transitionIn = new TranslateTransition(Duration.millis(300), registerPane);
+        transitionIn.setToX(0);
+        transitionIn.play();
+
+        TranslateTransition messageTransition = new TranslateTransition(Duration.millis(300), messagePane);
+        messageTransition.setFromX(0);
+        messageTransition.setToX(-loginPane.getWidth());
+        messageTransition.play();
     }
 
+    /**
+     * Muestra la vista de inicio de sesión y oculta la vista de registro.
+     */
     @FXML
     private void showLogin() {
-        transitionToLogin();
+        registerPane.setVisible(false);
+        loginPane.setVisible(true);
+        loginPane.setTranslateX(-loginPane.getWidth());
+
+        TranslateTransition transitionIn = new TranslateTransition(Duration.millis(300), loginPane);
+        transitionIn.setToX(0);
+        transitionIn.play();
+
+        TranslateTransition messageTransition = new TranslateTransition(Duration.millis(300), messagePane);
+        messageTransition.setFromX(0);
+        messageTransition.setToX(loginPane.getWidth());
+        messageTransition.play();
     }
 
     private ContextMenu contextMenu;
     private boolean isDarkTheme = true;
-    // Dependencia al ErrorHandler
+
     private ErrorHandler errorHandler = new ErrorHandler();
 
-    // Constructor sin parámetros
     public SignController() {
     }
 
+    /**
+     * Inicializa el controlador y configura el menú contextual y los eventos de
+     * los botones.
+     */
     @FXML
     public void initialize() {
-
         contextMenu = new ContextMenu();
         MenuItem optionLight = new MenuItem("Tema Claro");
         MenuItem optionDark = new MenuItem("Tema Oscuro");
@@ -145,27 +172,67 @@ public class SignController {
         revealConfirmButton.setOnAction(this::toggleConfirmPasswordVisibility);
     }
 
+    /**
+     * Muestra el menú contextual para cambiar entre temas.
+     *
+     * @param event El evento del mouse que activó el menú contextual.
+     */
     private void showContextMenu(MouseEvent event) {
         if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
         }
     }
 
+    /**
+     * Cambia el tema a claro.
+     *
+     * @param e El evento de acción.
+     */
     private void changeToLightTheme(ActionEvent e) {
-
-        changeToLightTheme();
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesClaro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
     }
 
+    /**
+     * Cambia el tema a oscuro.
+     *
+     * @param e El evento de acción.
+     */
     private void changeToDarkTheme(ActionEvent e) {
-
-        changeToDarkTheme();
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
     }
 
+    /**
+     * Cambia el tema a retro.
+     *
+     * @param e El evento de acción.
+     */
     private void changeToRetroTheme(ActionEvent e) {
-
-        changeToRetroTheme();
+        Scene scene = loginPane.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(getClass().getResource("/ui/stylesRetro.css").toExternalForm());
+        } else {
+            System.out.println("La escena es null");
+        }
     }
 
+    /**
+     * Alterna la visibilidad de la contraseña en el campo de contraseña.
+     *
+     * @param event El evento de acción.
+     */
     private void togglePasswordVisibility(ActionEvent event) {
         if ("Mostrar".equals(revealButton.getText())) {
             passwordField.setVisible(false);
@@ -185,6 +252,11 @@ public class SignController {
         }
     }
 
+    /**
+     * Alterna la visibilidad de la contraseña en el campo de registro.
+     *
+     * @param event El evento de acción.
+     */
     private void toggleRegisterPasswordVisibility(ActionEvent event) {
         if ("Mostrar".equals(revealRegisterButton.getText())) {
             registerPasswordField.setVisible(false);
@@ -204,6 +276,12 @@ public class SignController {
         }
     }
 
+    /**
+     * Alterna la visibilidad de la contraseña en el campo de confirmación de
+     * contraseña.
+     *
+     * @param event El evento de acción.
+     */
     private void toggleConfirmPasswordVisibility(ActionEvent event) {
         if ("Mostrar".equals(revealConfirmButton.getText())) {
             confirmPasswordField.setVisible(false);
@@ -223,46 +301,72 @@ public class SignController {
         }
     }
 
-    // Evento de Boton de Inicio de Sesion
     @FXML
     private void handleLogin() {
         String email = usernameField.getText();
         String password = passwordField.getText();
         List<String> errores = new ArrayList<>();
 
+        // Verifica si los campos de email y contraseña están vacíos
         if (email.isEmpty() && password.isEmpty()) {
             errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
             return;
         }
 
+        // Valida si la contraseña está vacía
         if (password.isEmpty()) {
-            errores.add("La contraseña no puede estar vacío.");
+            new Alert(Alert.AlertType.ERROR, "La contraseña no puede estar vacío.", ButtonType.OK).showAndWait();
         }
 
+        // Valida si el email está vacío
         if (email.isEmpty()) {
-            errores.add("El email no puede estar vacío.");
+            new Alert(Alert.AlertType.ERROR, "El email no puede estar vacío.", ButtonType.OK).showAndWait();
         }
 
+        // Valida si el formato del correo electrónico es válido
         if (!esCorreoValido(email)) {
-            errores.add("El correo electrónico no tiene un formato válido.");
+           // errores.add("El correo electrónico no tiene un formato válido.");
         }
 
+        // Si hay errores, los muestra
         if (!errores.isEmpty()) {
             String mensajeErrores = String.join("\n", errores);
             errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
-            return; // Salimos del método si hay errores
+            return;
         }
 
         try {
-            // Autenticar usuario
+            // Intenta autenticar al usuario
             if (errorHandler.autenticar(email, password)) {
                 Usuario usuario = new Usuario(email, password);
                 Mensaje mensaje = new Mensaje(usuario, Request.SIGN_IN_REQUEST);
                 Signable a = ClientFactory.getSignable();
                 a.signIn(mensaje);
-                abrirVista();
-                //       messageLabel.setText("¡Inicio de sesión exitoso!");
-                //      System.out.println("Usuario autenticado: " + email);
+                try {
+                    FXMLLoader loader = new FXMLLoader(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
+                    Parent root = loader.load();
+
+                    Scene scene = new Scene(root);
+                    FXMLDashboardController controller = loader.getController();
+                    controller.setScene(scene);
+
+                    scene.getStylesheets().add(SignController.class.getResource("/ui/stylesLogout_Oscuro.css").toExternalForm());
+
+                    controller.loadDefaultStyles();
+                    controller.init();
+
+                    Stage stage = new Stage();
+                    stage.setTitle("Ventana Sesion Iniciada");
+                    stage.setWidth(900);
+                    stage.setHeight(700);
+                    stage.setScene(scene);
+
+                    stage.initModality(Modality.APPLICATION_MODAL);
+
+                    stage.showAndWait();
+                } catch (IOException ex) {
+                    Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } catch (ErrorUsuarioNoActivo ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
@@ -277,10 +381,8 @@ public class SignController {
         }
     }
 
-    // Evento de Boton de Registrase
     @FXML
     private void handleRegister() {
-
         String nombreyApellidos = nombreyApellidoField.getText();
         String direccion = direccionField.getText();
         String ciudad = ciudadField.getText();
@@ -297,7 +399,8 @@ public class SignController {
         if (plainConfirmTextField != null) {
             confirmPasswordField.setText(plainConfirmTextField.getText());
         }
-        // Verificar si todos los campos están vacíos
+
+        // Verifica si todos los campos están vacíos
         if (nombreyApellidos.isEmpty() && direccion.isEmpty() && email.isEmpty() && password.isEmpty() && confirmPassword.isEmpty() && ciudad.isEmpty() && codigoPostalTexto.isEmpty()) {
             errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
             return;
@@ -326,102 +429,73 @@ public class SignController {
             errores.add("Confirma tu contraseña.");
         }
 
-        // Validar formato de correo
+        // Valida si el formato del correo electrónico es válido
         if (!esCorreoValido(email)) {
             errores.add("El correo electrónico no tiene un formato válido.");
         }
 
-        // Validar contraseñas coincidentes
+        // Verifica que las contraseñas coincidan
         if (!password.equals(confirmPassword)) {
             errores.add("Las contraseñas no coinciden.");
         }
 
-        // Validar fortaleza de la contraseña
+        // Verifica si la contraseña es fuerte
         if (!esContraseñaFuerte(password)) {
             errores.add("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una minúscula y un número.");
         }
 
-        // Validar código postal
-        if (!codigoPostalTexto.matches("\\d{5}")) { // Verifica que sean 5 dígitos
+        // Valida el formato del código postal
+        if (!codigoPostalTexto.matches("\\d{5}")) {
             errores.add("El código postal debe tener exactamente 5 números.");
         }
 
-        // Si hay errores, mostrar la alerta con todos los errores
+        // Si hay errores, los muestra
         if (!errores.isEmpty()) {
             String mensajeErrores = String.join("\n", errores);
             errorHandler.handleGeneralException(new Exception(mensajeErrores), messageLabel);
-            return; // Salimos del método si hay errores
+            return;
         }
 
-        // Registrar nuevo usuario usando el ErrorHandler
         try {
             int codigoPostal = Integer.parseInt(codigoPostalTexto);
             errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
 
-            //messageLabel.setText("¡Registro exitoso! Ahora puedes iniciar sesión.");
             Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
             Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
             Signable a = ClientFactory.getSignable();
-            a.singUp(mensaje); //Hay que cambiar el nombre a signUp
-            limpiarCamposRegistro();
+            a.singUp(mensaje);
+            nombreyApellidoField.clear();
+            ciudadField.clear();
+            codigoPostalField.clear();
+            direccionField.clear();
+            emailField.clear();
+            registerPasswordField.clear();
+            confirmPasswordField.clear();
         } catch (ErrorMaxClientes e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception e) {
-            errorHandler.handleGeneralException(e, messageLabel); // Maneja todos los errores
+            errorHandler.handleGeneralException(e, messageLabel);
         }
     }
 
-    // Método para limpiar los campos después del registro
-    private void limpiarCamposRegistro() {
-        nombreyApellidoField.clear();
-        ciudadField.clear();
-        codigoPostalField.clear();
-        direccionField.clear();
-        emailField.clear();
-        registerPasswordField.clear();
-        confirmPasswordField.clear();
-    }
-
-    // Metodo que cierra el SignIn y abre el SignUp
-    private void transitionToRegister() {
-        loginPane.setVisible(false);
-        registerPane.setVisible(true);
-        registerPane.setTranslateX(loginPane.getWidth());
-
-        TranslateTransition transitionIn = new TranslateTransition(Duration.millis(300), registerPane);
-        transitionIn.setToX(0);
-        transitionIn.play();
-
-        TranslateTransition messageTransition = new TranslateTransition(Duration.millis(300), messagePane);
-        messageTransition.setFromX(0);
-        messageTransition.setToX(-loginPane.getWidth());
-        messageTransition.play();
-    }
-
-    // Metodo que cierra el SignUp y Abre el SignIn
-    private void transitionToLogin() {
-        registerPane.setVisible(false);
-        loginPane.setVisible(true);
-        loginPane.setTranslateX(-loginPane.getWidth());
-
-        TranslateTransition transitionIn = new TranslateTransition(Duration.millis(300), loginPane);
-        transitionIn.setToX(0);
-        transitionIn.play();
-
-        TranslateTransition messageTransition = new TranslateTransition(Duration.millis(300), messagePane);
-        messageTransition.setFromX(0);
-        messageTransition.setToX(loginPane.getWidth());
-        messageTransition.play();
-    }
-
-    // Método para validar el formato del correo (simple)
+    /**
+     * Valida si el correo electrónico tiene un formato válido.
+     *
+     * @param email El correo electrónico a validar.
+     * @return true si el correo electrónico es válido, false en caso contrario.
+     */
     private boolean esCorreoValido(String email) {
         return email.contains("@") && email.contains(".");
     }
 
-    // Método para validar la fortaleza de la contraseña (ejemplo básico)
+    /**
+     * Valida si la contraseña es fuerte.
+     *
+     * @param password La contraseña a validar.
+     * @return true si la contraseña es fuerte, false en caso contrario.
+     */
     private boolean esContraseñaFuerte(String password) {
         return password.length() >= 8
                 && password.matches(".*[A-Z].*")
@@ -429,99 +503,36 @@ public class SignController {
                 && password.matches(".*[0-9].*");
     }
 
-// Metodo para abrir la vista de Iniciode Sesion
-    public static void abrirVista() {
-        try {
-            // Cargar el DOM de la vista FXML
-            FXMLLoader loader = new FXMLLoader(SignController.class.getResource("/ui/FXMLDashboard.fxml"));
-            Parent root = loader.load();
-            // Crear nueva escena
-            Scene scene = new Scene(root);
-            FXMLDashboardController controller = loader.getController();
-            controller.setScene(scene);
-            // Añadir el CSS por defecto (Oscuro)
-            scene.getStylesheets().add(SignController.class.getResource("/ui/stylesLogout_Oscuro.css").toExternalForm());
-            
-            controller.loadDefaultStyles();
-            controller.init();
-            // Crear un nuevo stage
-            Stage stage = new Stage();
-            stage.setTitle("Ventana Sesion Iniciada");
-            stage.setWidth(900);
-            stage.setHeight(700);
-            stage.setScene(scene);
-
-            stage.initModality(Modality.APPLICATION_MODAL);// Bloquea la ventana previa
-
-            stage.showAndWait();
-
-        } catch (IOException ex) {
-            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    // CREACION DEL MENU CONTEXTUAL
+    /**
+     * Crea un menú contextual para cambiar el tema de la aplicación.
+     *
+     * @param scene La escena en la que se mostrará el menú.
+     * @return El menú contextual creado.
+     */
     private static ContextMenu createThemeMenu(Scene scene) {
         ContextMenu menu = new ContextMenu();
 
-        // Crear los elementos del menú para cada tema (nombres)
         MenuItem darkTheme = new MenuItem("Tema Oscuro");
         MenuItem lightTheme = new MenuItem("Tema Claro");
         MenuItem retroTheme = new MenuItem("Tema Retro");
 
-        // Añadir acciones a cada elemento del menú
         darkTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Oscuro.css", scene));
         lightTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Claro.css", scene));
         retroTheme.setOnAction(event -> changeTheme("/ui/stylesLogout_Retro.css", scene));
 
-        // Añadir los elementos al menú
         menu.getItems().addAll(darkTheme, lightTheme, retroTheme);
 
-        // Retorna el menu
         return menu;
     }
 
-    // Método para cambiar el tema
+    /**
+     * Cambia el tema de la escena de la aplicación.
+     *
+     * @param themeFile El archivo de estilo del tema a aplicar.
+     * @param scene La escena a la que se le aplicará el nuevo tema.
+     */
     private static void changeTheme(String themeFile, Scene scene) {
-        // Limpiar estilos actuales y cargar el nuevo CSS
         scene.getStylesheets().clear();
         scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // METODOS PARA CAMBIAR LA ESCENA DE FONDO
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Meotodo para cambiar al tema Blanco
-    private void changeToLightTheme() {
-
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos existentes
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesClaro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
-    }
-
-    // Método para cambiar al tema oscuro
-    private void changeToDarkTheme() {
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
-    }
-
-    // Método para cambiar al tema retro
-    private void changeToRetroTheme() {
-        Scene scene = loginPane.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear(); // Limpiar estilos existentes
-            scene.getStylesheets().add(getClass().getResource("/ui/stylesRetro.css").toExternalForm());
-        } else {
-            System.out.println("La escena es null");
-        }
     }
 }

@@ -1,6 +1,5 @@
 package userInterfaceTier;
 
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,32 +9,33 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-
 /**
- * Main application class for the RETO application. It initializes the JavaFX
- * application and loads the login screen.
- *
+ * Clase principal de la aplicación RETO. Inicializa la aplicación JavaFX
+ * y carga la pantalla de inicio de sesión.
+ * 
  * @author Ekain
  */
 public class ApplicationClient extends javafx.application.Application {
 
+    /**
+     * Método que se llama al iniciar la aplicación.
+     * 
+     * @param stage El escenario principal de la aplicación.
+     * @throws Exception si ocurre un error durante la carga del archivo FXML.
+     */
     @Override
     public void start(Stage stage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getResource("/ui/FXMLLogin.fxml"));
         
-        
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
-        
         
         stage.setWidth(900);
         stage.setHeight(780);
         
-        
         stage.setTitle("Sign up & Sign in");
         
-       
         stage.setScene(scene);
         
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -46,10 +46,14 @@ public class ApplicationClient extends javafx.application.Application {
             }
         });
         
-        
         stage.show();
     }
     
+    /**
+     * Muestra una alerta de confirmación al intentar cerrar la aplicación.
+     * 
+     * @param stage El escenario principal de la aplicación.
+     */
     private void mostrarConfirmacionCerrar(Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Cierre");
@@ -63,6 +67,11 @@ public class ApplicationClient extends javafx.application.Application {
         });
     }
 
+    /**
+     * Método principal que inicia la aplicación.
+     * 
+     * @param args Argumentos de la línea de comandos.
+     */
     public static void main(String[] args) {
         launch(args);
     }

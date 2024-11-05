@@ -10,44 +10,63 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+/**
+ * Controlador para la interfaz del dashboard en la aplicación.
+ * Maneja la lógica de la interfaz de usuario relacionada con el 
+ * panel principal y la selección de temas.
+ * @author Oier
+ */
 public class FXMLDashboardController {
 
     @FXML
-    private AnchorPane rootPane;
+    private AnchorPane rootPane;  // Pane raíz de la interfaz gráfica.
 
     @FXML
-    private Button logoutButton;
+    private Button logoutButton;  // Botón para cerrar sesión.
 
-    private Scene scene;
+    private Scene scene;  // Escena actual de la interfaz.
 
-    // Método para establecer la escena desde el controlador principal
+    /**
+     * Establece la escena para el controlador y carga los estilos predeterminados.
+     * 
+     * @param scene la escena que se va a establecer.
+     */
     public void setScene(Scene scene) {
         this.scene = scene;
-        loadDefaultStyles(); // Cargar estilos predeterminados al establecer la escena
+        loadDefaultStyles();
     }
 
-    
+    /**
+     * Inicializa el controlador y configura los eventos para el menú de temas
+     * y el botón de cierre de sesión.
+     */
     public void init() {
-        // Crear y configurar el menú contextual
         ContextMenu themeMenu = createThemeMenu();
 
-        // Mostrar el menú contextual al hacer clic derecho en el rootPane
+        // Muestra el menú de contexto al hacer clic derecho en el pane raíz.
         rootPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.getButton() == MouseButton.SECONDARY) { // Clic derecho
+            if (event.getButton() == MouseButton.SECONDARY) {
                 themeMenu.show(rootPane, event.getScreenX(), event.getScreenY());
             }
         });
 
-        // Configurar la acción del botón de logout
-        logoutButton.setOnAction(this::handleLogoutButtonAction);
+        logoutButton.setOnAction(this::handleLogoutButtonAction); // Configura la acción del botón de logout.
     }
 
-    
+    /**
+     * Maneja la acción de clic en el botón de cierre de sesión.
+     * 
+     * @param event el evento de acción.
+     */
     private void handleLogoutButtonAction(javafx.event.ActionEvent event) {
-        closeWindow(); // Cerrar la ventana
+        closeWindow();  // Cierra la ventana actual.
     }
 
-    
+    /**
+     * Crea un menú contextual que permite seleccionar diferentes temas de la interfaz.
+     * 
+     * @return el menú contextual de selección de temas.
+     */
     private ContextMenu createThemeMenu() {
         ContextMenu menu = new ContextMenu();
 
@@ -55,10 +74,10 @@ public class FXMLDashboardController {
         MenuItem lightTheme = new MenuItem("Tema Claro");
         MenuItem retroTheme = new MenuItem("Tema Retro");
 
-        
+        // Establece las acciones para los ítems del menú de temas.
         darkTheme.setOnAction(event -> {
             changeTheme("/ui/stylesLogout_Oscuro.css");
-            menu.hide();
+            menu.hide();  // Cierra el menú después de seleccionar un tema.
         });
         lightTheme.setOnAction(event -> {
             changeTheme("/ui/stylesLogout_Claro.css");
@@ -69,33 +88,41 @@ public class FXMLDashboardController {
             menu.hide();
         });
 
-        menu.getItems().addAll(darkTheme, lightTheme, retroTheme);
-        return menu; // No se necesita llamar a hide() aquí
+        menu.getItems().addAll(darkTheme, lightTheme, retroTheme); // Agrega los ítems al menú.
+        return menu;
     }
 
-    // Método para cambiar el tema de la escena
+    /**
+     * Cambia el tema de la escena según el archivo de estilo proporcionado.
+     * 
+     * @param themeFile la ruta del archivo de estilo que se va a aplicar.
+     */
     private void changeTheme(String themeFile) {
         if (scene != null) {
-            scene.getStylesheets().clear();
-            String stylesheet = getClass().getResource(themeFile).toExternalForm();
-            scene.getStylesheets().add(stylesheet);
+            scene.getStylesheets().clear();  // Limpia los estilos actuales.
+            String stylesheet = getClass().getResource(themeFile).toExternalForm(); // Obtiene la ruta del nuevo estilo.
+            scene.getStylesheets().add(stylesheet);  // Agrega el nuevo estilo a la escena.
         } else {
-            System.out.println("La escena es null");
+            System.out.println("La escena es null");  // Mensaje de advertencia si la escena es nula.
         }
     }
 
-    // Método para cargar los estilos predeterminados al inicio
+    /**
+     * Carga los estilos predeterminados para la escena actual.
+     */
     public void loadDefaultStyles() {
         if (scene != null) {
-            scene.getStylesheets().clear();
-            String defaultStylesheet = getClass().getResource("/ui/stylesLogout_Oscuro.css").toExternalForm();
-            scene.getStylesheets().add(defaultStylesheet);
+            scene.getStylesheets().clear();  // Limpia los estilos actuales.
+            String defaultStylesheet = getClass().getResource("/ui/stylesLogout_Oscuro.css").toExternalForm(); // Obtiene el estilo predeterminado.
+            scene.getStylesheets().add(defaultStylesheet);  // Aplica el estilo predeterminado a la escena.
         }
     }
 
-    // Método para cerrar la ventana
+    /**
+     * Cierra la ventana actual del dashboard.
+     */
     private void closeWindow() {
-        Stage stage = (Stage) rootPane.getScene().getWindow();
-        stage.close(); 
+        Stage stage = (Stage) rootPane.getScene().getWindow(); // Obtiene la ventana de la escena actual.
+        stage.close();  // Cierra la ventana.
     }
 }

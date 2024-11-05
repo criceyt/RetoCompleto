@@ -65,7 +65,7 @@
                 </HBox>
 
 
-                <Button onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
+                <Button id="handleRegister" onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
                 <Text styleClass="text-black" text="¿Ya tienes cuenta? Inicia sesión aquí." />
                 <Button fx:id="backToLoginButton" onAction="#showLogin" styleClass="button button-register" text="Iniciar Sesión" />
             </VBox>

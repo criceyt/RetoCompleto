@@ -1,16 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package exceptions;
 
 /**
+ * Excepción personalizada para manejar los errores cuando se intenta registrar un usuario
+ * con un correo electrónico que ya está registrado en el sistema.
  *
- * @author 2dam
+ * @author oier
  */
-public class ErrorCorreoExistente extends Exception{
+public class ErrorCorreoExistente extends Exception {
+
+    /**
+     * Constructor sin parámetros que inicializa la excepción con un mensaje predeterminado.
+     * El mensaje indica que el correo proporcionado ya está registrado en el sistema.
+     */
     public ErrorCorreoExistente() {
-        super("Error el correo que quiere introducir esta ya registrado");
+        // Llamada al constructor de la clase base (Exception) con un mensaje de error específico
+        super("Error: El correo que quiere introducir está ya registrado.");
     }
 }
+
