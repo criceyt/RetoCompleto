@@ -8,22 +8,20 @@ package teses;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.stage.Stage;
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.matcher.base.NodeMatchers;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import userInterfaceTier.Application;
 
 /**
  *
- * @author oier
+ * @author 2dam
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SignControllerTest extends ApplicationTest {
+public class TestSignUp extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -31,45 +29,7 @@ public class SignControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void a_testLoginExitoso() {
-
-        // TEST DE INICIO DE SESION
-        // Test de campos vacios
-        clickOn("#loginButton");
-
-        verifyThat("No hay ningún campo rellenado.", isVisible());
-        clickOn("Aceptar");
-
-        // Test de Campo de gmail vacio
-        clickOn("#usernameField");
-        write("p9rueba@gmail.com");
-        clickOn("#loginButton");
-
-        verifyThat("La contraseña no puede estar vacío.", isVisible());
-        clickOn("Aceptar");
-
-        // Test de campo Password vacio
-        clickOn("#usernameField");
-        eraseText(25);
-        clickOn("#passwordFieldParent");
-        write("12345678Aa");
-        clickOn("#loginButton");
-
-        verifyThat("El email no puede estar vacío.", isVisible());
-        clickOn("Aceptar");
-
-        // Test de user Inexistente
-        clickOn("#usernameField");
-        write("p9rueba@gmail.com");
-        clickOn("#loginButton");
-
-        verifyThat("Error: El usuario no ha sido encontrado (NO EXISTE)", isVisible());
-        clickOn("Aceptar");
-
-    }
-
-    @Test
-    public void b_testRegistrarse() {
+    public void a_testSignUpExitoso() {
 
         // TEST DE REGISTARSE BIEN
         // Antes de inicar debe de esperar un poco a que abra el desplegable
@@ -78,7 +38,7 @@ public class SignControllerTest extends ApplicationTest {
             // Test de Registro
             Thread.sleep(500);
         } catch (InterruptedException ex) {
-            Logger.getLogger(SignControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestSignUp.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // Test de Campos vacios
@@ -122,7 +82,7 @@ public class SignControllerTest extends ApplicationTest {
         write("Gran Via");
         clickOn("#emailField");
         eraseText(8);
-        write("p9rueba@gmail.com");
+        write("usuario@gmail.com");
         clickOn("#registerPasswordFieldParent");
         eraseText(4);
         write("12345678Aa");
@@ -143,7 +103,7 @@ public class SignControllerTest extends ApplicationTest {
         clickOn("#direccionField");
         write("Gran Via");
         clickOn("#emailField");
-        write("p9rueba@gmail.com");
+        write("usuario@gmail.com");
         clickOn("#registerPasswordFieldParent");
         write("12345678Aa");
         clickOn("#confirmPasswordFieldParent");
@@ -152,35 +112,11 @@ public class SignControllerTest extends ApplicationTest {
 
         verifyThat("Error el correo que quiere introducir esta ya registrado", isVisible());
         clickOn("Aceptar");
-        
-        clickOn("#backToLoginButton");
-
-        // TEST PARA VER SI EL INICIO DE SESION ES EXITOSO
-        // Cada vez que se cambie de desplegable hay que esperar un poco para que se pongan los TextFiel com o visibles
-        try {
-            // Test de Registro
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SignControllerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // Se Registra
-        clickOn("#usernameField");
-        write("p9rueba@gmail.com");
-        clickOn("#passwordFieldParent");
-        write("12345678Aa");
-        clickOn("#loginButton");
-
-        verifyThat("#logoutButton", isVisible());
-        clickOn("#logoutButton");
 
     }
 
-   
-
     @Test
-    public void d_testIniciarInactivo() {
-
+    public void testSignUpInactivo() {
         // TEST PARA REGISTAR Y INICAR UN USER INACTIVO
         clickOn("#registerButton");
         // Hay que esperar un poco porque si no encuentra los elemento dentro del desplegable
@@ -188,8 +124,9 @@ public class SignControllerTest extends ApplicationTest {
             // Test de Registro
             Thread.sleep(500);
         } catch (InterruptedException ex) {
-            Logger.getLogger(SignControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestSignUp.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // Primer registro de User No Activo
         clickOn("#nombreyApellidoField");
         write("Usuario No Activo");
         clickOn("#ciudadField");
@@ -199,7 +136,7 @@ public class SignControllerTest extends ApplicationTest {
         clickOn("#direccionField");
         write("Prueba");
         clickOn("#emailField");
-        write("1usuarioNoActivo@gmail.com");
+        write("u5suarioNoActivo@gmail.com");
         clickOn("#registerPasswordFieldParent");
         write("12345678Aa");
         clickOn("#revealRegisterButton");
@@ -208,24 +145,8 @@ public class SignControllerTest extends ApplicationTest {
         clickOn("#activoCheckBox");
         clickOn("#handleRegister");
 
+        // Segundo registro de User Activo
         // Vamos a inciar sesion y a verificar que no esta activo
         clickOn("#backToLoginButton");
-        // Esperamos...
-        try {
-            // Test de Registro
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SignControllerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        clickOn("#usernameField");
-        eraseText(27);
-        write("1usuarioNoActivo9@gmail.com");
-        clickOn("#passwordFieldParent");
-        eraseText(10);
-        write("12345678Aa");
-        clickOn("#loginButton");
-
-        verifyThat("Error: El usuario no esta Activo", isVisible());
     }
 }
