@@ -1,18 +1,45 @@
 .root {
     -fx-background-image: url("/ui/fondo_(1).jpg");
-    -fx-background-size: cover; /* La imagen cubre todo el área */
-    -fx-background-position: center center; /* Centra la imagen */
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-selection-bar: #0096c9;
+    -fx-focused-text-base-color: black;
+}
+
+.welcome-text {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+}
+
+.login-pane {
+    -fx-background-color: rgba(20, 20, 30, 0.9);
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-border-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 255, 0.6), 15, 0, 0, 0);
 }
 
 .button {
-    -fx-background-color: #555; /* Color de fondo del botón */
-    -fx-text-fill: white; /* Color del texto del botón */
-    -fx-font-size: 20px; /* Tamaño de fuente del botón */
-    -fx-pref-width: 200; /* Ancho preferido del botón */
-    -fx-pref-height: 50; /* Alto preferido del botón */
+    -fx-background-color: #555;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 180px;
+    -fx-pref-height: 45px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 2);
 }
 
-
 .button:hover {
-    -fx-background-color: #888; /* Color de fondo al pasar el mouse */
+    -fx-background-color: #888;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 15, 0, 0, 3);
+}
+
+.button:pressed {
+    -fx-background-color: #444;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0, 0, 1);
 }

@@ -29,18 +29,14 @@ public class ErrorHandler {
             throw new Exception("El correo electrónico no tiene un formato válido.");
         }
 
-
-
         Usuario usuario = usuariosRegistrados.get(email);
-
-
 
         return true;
     }
 
     public void validarYRegistrar(String nombreyApellidos, String ciudad, int codigoPostal, String direccion, String email, String password, String confirmPassword, boolean estaActivo) throws Exception {
         // Validación: Campos vacíos
-        if (nombreyApellidos.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || direccion.isEmpty() || ciudad.isEmpty() || codigoPostal == ' ' ) {
+        if (nombreyApellidos.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || direccion.isEmpty() || ciudad.isEmpty() || codigoPostal == ' ') {
             throw new Exception("Por favor, completa todos los campos.");
         }
 
@@ -48,9 +44,6 @@ public class ErrorHandler {
         if (!esCorreoValido(email)) {
             throw new Exception("El correo electrónico no tiene un formato válido.");
         }
-
-        // Validación: Usuario ya existente
-       
 
         // Validación: Contraseñas coinciden
         if (!password.equals(confirmPassword)) {
@@ -81,12 +74,12 @@ public class ErrorHandler {
     /**
      * Método auxiliar para mostrar una alerta al usuario.
      */
-       private static void showAlert(String title, String header, String content, AlertType alertType) {
+    private static void showAlert(String title, String header, String content, AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.showAndWait(); 
+        alert.showAndWait();
     }
 
     /**
@@ -109,10 +102,4 @@ public class ErrorHandler {
         return password.matches(passwordRegex);
     }
 
-
-    /**
-     * Método para validar y registrar un nuevo usuario. Verifica todos los
-     * campos, formato del correo, fortaleza de la contraseña, y si el usuario
-     * ya existe.
-     */
 }

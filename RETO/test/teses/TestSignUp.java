@@ -14,7 +14,7 @@ import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import userInterfaceTier.Application;
+import userInterfaceTier.ApplicationClient;
 
 /**
  *
@@ -25,7 +25,7 @@ public class TestSignUp extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        new Application().start(stage);
+        new ApplicationClient().start(stage);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TestSignUp extends ApplicationTest {
         write("12345678Aa");
         clickOn("#handleRegister");
 
-        // Como verifico que el user se ha introducido bien
+        verifyThat("#loginButton", isVisible());
         // Test de Correo repetido
         clickOn("#nombreyApellidoField");
         write("Javi Profesor");

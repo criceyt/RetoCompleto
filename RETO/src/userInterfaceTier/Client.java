@@ -1,8 +1,8 @@
 package userInterfaceTier;
 
-import exceptions.ErroMaxClientes;
 import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
+import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
 import libreria.Signable;
@@ -13,15 +13,19 @@ import java.net.Socket;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
 import libreria.Mensaje;
-import libreria.Request;
+import static libreria.Request.ERROR_GENERAL;
+import static libreria.Request.SIGN_IN_EXITOSO;
+import static libreria.Request.USUARIO_INEXISTENTE;
+import static libreria.Request.USUARIO_NO_ACTIVO;
+import libreria.Usuario;
 
 /**
+ * Clase que implementa la interfaz {@link Signable} para gestionar el inicio de
+ * sesión y el registro de usuarios a través de un socket. Esta clase maneja la
+ * comunicación con un servidor remoto para autenticar a los usuarios y
+ * registrar nuevos usuarios.
  *
  * @author gorka
  */
@@ -35,12 +39,23 @@ public class Client implements Signable {
     ObjectOutputStream salida = null;
     Alert alert;
 
-    // SING UP 
+    /**
+     * Registra un nuevo usuario.
+     *
+     * @param mensaje objeto que contiene la información del usuario a
+     * registrar.
+     * @return el usuario registrado.
+     * @throws ErrorGeneral si ocurre un error general durante el registro.
+     * @throws ErrorCorreoExistente si el correo ya está asociado a un usuario
+     * existente.
+     * @throws ErrorMaxClientes si se ha alcanzado el número máximo de clientes
+     * permitidos.
+     */
     @Override
-    public Mensaje singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente {
+    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes {
 
         try {
-            // cargar pyuerto
+            // cargar puerto
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
             String recogerPuerto = bundle.getString("PUERTO");
             puerto = Integer.parseInt(recogerPuerto);
@@ -57,19 +72,18 @@ public class Client implements Signable {
             salida.writeObject(mensaje);
             mensaje = (Mensaje) entrada.readObject();
             System.out.println(mensaje.getRq());
-            
-            switch(mensaje.getRq()) {
+
+            switch (mensaje.getRq()) {
                 case ERROR_GENERAL:
                     throw new ErrorGeneral();
                 case ERROR_USUARIO_YA_EXISTE:
                     throw new ErrorCorreoExistente();
-                    
-               
+                case ERROR_MAX_CLIENTES:
+                    throw new ErrorMaxClientes();
             }
 
         } catch (NumberFormatException e) {
             LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 16700;
         } catch (IOException e) {
             LOGGER.severe("No se ha podido conectar con el servidor");
             throw new ErrorGeneral();
@@ -81,15 +95,27 @@ public class Client implements Signable {
             finalizar();
         }
 
-        return mensaje;
+        return mensaje.getUser();
     }
 
-    // SING IN 
+    /**
+     * Inicia sesión de un usuario.
+     *
+     * @param mensaje objeto que contiene la información del usuario para
+     * iniciar sesión.
+     * @return el usuario autenticado.
+     * @throws ErrorGeneral si ocurre un error general durante el inicio de
+     * sesión.
+     * @throws ErrorUsuarioNoActivo si el usuario no está activo.
+     * @throws ErrorUsuarioInexistente si el usuario no existe.
+     * @throws ErrorMaxClientes si se ha alcanzado el número máximo de clientes
+     * permitidos.
+     */
     @Override
-    public Mensaje signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente {
+    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes {
 
         try {
-            // cargar pyuerto
+            // cargar puerto
 
             ResourceBundle bundle = ResourceBundle.getBundle("libreria.puerto");
             String recogerPuerto = bundle.getString("PUERTO");
@@ -107,40 +133,41 @@ public class Client implements Signable {
             salida.writeObject(mensaje);
             mensaje = (Mensaje) entrada.readObject();
             System.out.println(mensaje.getRq());
-            
-            switch(mensaje.getRq()) {
+
+            switch (mensaje.getRq()) {
                 case SIGN_IN_EXITOSO:
-                    SignController.abrirVista();
+                    //SignController.abrirVista();
                     break;
                 case ERROR_GENERAL:
                     throw new ErrorGeneral();
-                    
+
                 case USUARIO_NO_ACTIVO:
                     throw new ErrorUsuarioNoActivo();
-                    
+
                 case USUARIO_INEXISTENTE:
                     throw new ErrorUsuarioInexistente();
-                
+                case ERROR_MAX_CLIENTES:
+                    throw new ErrorMaxClientes();
+
             }
-            
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             throw new ErrorGeneral();
         } catch (NumberFormatException e) {
             LOGGER.severe("El puerto en el archivo de propiedades, no es un puerto valido" + e.getMessage());
-            puerto = 16700;
         } catch (IOException e) {
-            LOGGER.severe("No se ha podido conectar con el servidor");
+            LOGGER.severe("No se ha podido conectar con el servidor, hilos ocupados");
             throw new ErrorGeneral();
-
         } finally {
             finalizar();
         }
-        return mensaje;
+        return mensaje.getUser();
     }
 
-    // METODO FINALIZAR QUE COMPARTE
+    /**
+     * Cierra la conexión con el servidor y libera los recursos utilizados.
+     */
     private void finalizar() {
         try {
             if (socket != null) {

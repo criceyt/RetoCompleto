@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package teses;
 
 import javafx.stage.Stage;
@@ -12,7 +7,7 @@ import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import userInterfaceTier.Application;
+import userInterfaceTier.ApplicationClient;
 
 /**
  *
@@ -20,24 +15,25 @@ import userInterfaceTier.Application;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ErrorServerTest extends ApplicationTest {
-    
-     @Override
+
+    @Override
     public void start(Stage stage) throws Exception {
-        new Application().start(stage);
+        new ApplicationClient().start(stage);
 
     }
-    
+
     @Test
     public void testErrorServer() {
-        
+
         // Test de server cerrado
         clickOn("#usernameField");
-        write("5prueba@gmail.com");
+        write("6prueba@gmail.com");
         clickOn("#passwordFieldParent");
         write("12345678Aa");
         clickOn("#loginButton");
-        
-        verifyThat("Error General en el Server", isVisible());
+
+        verifyThat("Error general en el servidor.", isVisible());
+        clickOn("Aceptar");
     }
-    
+
 }
