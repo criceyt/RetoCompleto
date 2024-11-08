@@ -1,6 +1,6 @@
 # Documentación del Proyecto
 
-Este proyecto es una aplicación que se integra con la base de datos de Odoo y requiere una configuración específica para su correcto funcionamiento. Para que la aplicación funcione, es necesario que en la base de datos de Odoo estén instalados los módulos **Project** y **Task Log**. 
+Este proyecto es una aplicación desarrollada para Java 8 que se integra con la base de datos de Odoo y requiere una configuración específica para su correcto funcionamiento. Para que la aplicación funcione, es necesario que en la base de datos de Odoo estén instalados los módulos **Project** y **Task Log**. 
 
 Los archivos de propiedades para la configuración de la conexión a la base de datos y el puerto de la aplicación deben estar en las ubicaciones correspondientes:
 
