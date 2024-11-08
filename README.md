@@ -17,3 +17,11 @@ Este proyecto fue desarrollado por:
 - **Ekain** - GitHub: [criceyt](https://github.com/criceyt)
 
 Por favor, revisa que los módulos de Odoo y todos los archivos de configuración estén correctamente ubicados y configurados para garantizar el correcto funcionamiento de la aplicación. Para cualquier duda o comentario, puedes contactar a los colaboradores a través de sus perfiles de GitHub.
+//
+- **TEST** - Cuando abreamos los teses encontraremos diferentes clases java, estos tienen que ser ejecutados en este orden:
+- TestSignUp (este test tiene que ser el primero en ejecutar porque En el testSignIn Utiliza LOS DATOS DE SIGNUP)
+- TestSignIn
+- TestErrorServer este test tiene que ser ejecutado con el servidor cerrado para que asi salte error en el server
+
+-- La unica forma de acceder a al error de maximo de clientes es poniendo en conexion.properties --> MaxCon=0
+
