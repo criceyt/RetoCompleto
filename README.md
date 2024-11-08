@@ -11,8 +11,6 @@ La aplicación incluye un menú contextual que se activa haciendo clic derecho e
 - En el **formulario principal**: haciendo clic derecho en el fondo del formulario.
 - En la **ventana de inicio**: haciendo clic derecho en cualquier área de la ventana.
 
-Para facilitar la ejecución en dispositivos Windows, hemos creado un acceso directo que apunta a un archivo `.bat`. Es **importante no mover ni el acceso directo ni el archivo `.bat` de su ubicación original**, ya que cualquier cambio en su ubicación puede impedir el correcto funcionamiento de la aplicación. Asegúrate de que ambos archivos estén en el directorio especificado y ejecuta el acceso directo para iniciar automáticamente ambos programas.
-
 Este proyecto fue desarrollado por:
 - **Gorka** - GitHub: [GorkaArteaga1](https://github.com/GorkaArteaga1)
 - **Oier** - GitHub: [URKIZU](https://github.com/URKIZU)
