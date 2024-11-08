@@ -1,0 +1,66 @@
+#backgroundImage {
+    -fx-image: url("/ui/fondo_(1).jpg");
+    -fx-background-size: cover; /* Asegura que la imagen cubra todo el área */
+    -fx-background-position: center; /* Centra la imagen */
+    -fx-background-repeat: no-repeat;
+}
+
+
+/* Estilos para el contenedor principal */
+.login-pane, .register-pane {
+    -fx-background-color: rgba(44, 44, 44);
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+/* Estilos para el texto */
+.text-title {
+    -fx-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Estilos para los labels */
+.label {
+    -fx-text-fill: #AAAAAA;
+    -fx-font-size: 12px;
+}
+
+/* Estilos para los TextField */
+.text-field {
+    -fx-background-color: #555;
+    -fx-text-fill: white;
+    -fx-border-color: #888;
+    -fx-border-radius: 10;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 300;
+}
+
+/* Estilos para los PasswordField */
+.password-field {
+    -fx-background-color: #555;
+    -fx-text-fill: white;
+    -fx-border-color: #888;
+    -fx-border-radius: 10;
+    -fx-pref-width: 200;
+    -fx-min-width: 200;
+    -fx-max-width: 500;
+}
+.text-black {
+    -fx-fill: white;
+}
+/* Estilos para los botones */
+.button {
+    -fx-background-color: #555;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-pref-width: 100;
+    -fx-min-width: 100;
+    -fx-max-width: 120;
+}
+
+.custom-checkbox .text {
+    -fx-fill: #AAAAAA; 
+}
