@@ -47,6 +47,9 @@
                 <TextField fx:id="direccionField" promptText="Dirección" styleClass="text-field" />
                 <Label text="Correo Electrónico" styleClass="label" />
                 <TextField fx:id="emailField" promptText="Correo Electrónico" styleClass="text-field" />
+                 <Label text="telefono" styleClass="label" />
+                <TextField fx:id="mobileField" layoutX="14.0" layoutY="220.0" prefWidth="200.0" promptText="telefono    "/>
+
                 <Label text="Contraseña" styleClass="label" />
                 <HBox fx:id="registerPasswordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="registerPasswordField" promptText="Contraseña" styleClass="password-field" />
@@ -65,7 +68,7 @@
                 </HBox>
 
 
-                <Button onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
+                <Button id="handleRegister" onAction="#handleRegister" styleClass="button button-login" text="Registrarse" />
                 <Text styleClass="text-black" text="¿Ya tienes cuenta? Inicia sesión aquí." />
                 <Button fx:id="backToLoginButton" onAction="#showLogin" styleClass="button button-register" text="Iniciar Sesión" />
             </VBox>

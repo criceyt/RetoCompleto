@@ -1,6 +1,6 @@
 #backgroundImage {
     -fx-image: url("/ui/fondo_(1).jpg");
-  -fx-background-size: cover; /* Asegura que la imagen cubra todo el área */
+    -fx-background-size: cover; /* Asegura que la imagen cubra todo el área */
     -fx-background-position: center; /* Centra la imagen */
     -fx-background-repeat: no-repeat;
 }
@@ -64,5 +64,3 @@
 .custom-checkbox .text {
     -fx-fill: #AAAAAA; 
 }
-
-

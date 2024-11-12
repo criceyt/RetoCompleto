@@ -34,4 +34,3 @@
     -fx-background-color: rgba(0, 102, 204, 0.9); /* Un azul más oscuro al presionar */
     -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 1);
 }
-

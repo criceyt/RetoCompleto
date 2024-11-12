@@ -12,16 +12,8 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/userInterfaceTier/Client.java</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/stylesOscuro.css</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/stylesRetro.css</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/validations/ErrorHandler.java</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/FXMLDashboardController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/userInterfaceTier/SignController.java</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/FXMLDashboard.fxml</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/FXMLLogin.fxml</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/ui/stylesClaro.css</file>
-            <file>file:/C:/Users/2dam/Desktop/RetoCompleto/RetoCompleto/RETO/src/userInterfaceTier/ApplicationClient.java</file>
+            <file>file:/C:/Users/2dam/Desktop/RetoCompleto-Master/RETO/test/teses/ErrorServerTest.java</file>
+            <file>file:/C:/Users/2dam/Desktop/RetoCompleto-Master/RETO/test/teses/TestSignIn.java</file>
         </group>
     </open-files>
 </project-private>
