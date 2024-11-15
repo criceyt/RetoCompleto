@@ -3,7 +3,6 @@ package dataAccessTier;
 import static dataAccessTier.AplicattionServer.decrementarClientes;
 import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
-import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
 import java.io.IOException;
@@ -82,8 +81,6 @@ public class Worker implements Runnable {
                     // Manejar errores generales
                     Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
                     mensaje.setRq(Request.ERROR_GENERAL);  // Error genérico
-                } catch (ErrorMaxClientes ex) {
-                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 // Si la solicitud es un inicio de sesión (signIn)

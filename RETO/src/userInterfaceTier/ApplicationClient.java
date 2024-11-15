@@ -33,7 +33,7 @@ public class ApplicationClient extends javafx.application.Application {
         scene.getStylesheets().add(getClass().getResource("/ui/stylesOscuro.css").toExternalForm());
 
         stage.setWidth(900);
-        stage.setHeight(810);
+        stage.setHeight(780);
 
         stage.setTitle("Sign up & Sign in");
 

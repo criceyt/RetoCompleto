@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -62,9 +64,6 @@ public class SignController {
     @FXML
     private TextField usernameField;
     @FXML
-    private TextField mobileField;
-
-    @FXML
     private PasswordField passwordField;
     @FXML
     private TextField nombreyApellidoField;
@@ -102,6 +101,7 @@ public class SignController {
     private HBox confirmPasswordFieldParent;
     @FXML
     private CheckBox activoCheckBox;
+    private boolean foco = false;
 
     /**
      * Muestra la vista de registro y oculta la vista de inicio de sesión.
@@ -175,6 +175,18 @@ public class SignController {
         revealButton.setOnAction(this::togglePasswordVisibility);
         revealRegisterButton.setOnAction(this::toggleRegisterPasswordVisibility);
         revealConfirmButton.setOnAction(this::toggleConfirmPasswordVisibility);
+
+        emailField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(emailField);
+            }
+        });
+        codigoPostalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateFieldCodigoPostal(codigoPostalField);
+            }
+        });
+
     }
 
     /**
@@ -248,9 +260,11 @@ public class SignController {
             revealButton.setText("Ocultar");
 
             plainTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordField.setText(newValue));
+
         } else {
             passwordField.setText(plainTextField.getText());
             passwordField.setVisible(true);
+
             passwordFieldParent.getChildren().set(0, passwordField);
             revealButton.setText("Mostrar");
             plainTextField = null;
@@ -312,7 +326,6 @@ public class SignController {
         String password = passwordField.getText();
         List<String> errores = new ArrayList<>();
 
-        // Verifica si los campos de email y contraseña están vacíos
         if (email.isEmpty() && password.isEmpty()) {
             errorHandler.handleGeneralException(new Exception("No hay ningún campo rellenado."), messageLabel);
             return;
@@ -397,7 +410,6 @@ public class SignController {
         String email = emailField.getText();
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        String mobileTexto = mobileField.getText().trim();
         boolean estaActivo = activoCheckBox.isSelected();
 
         List<String> errores = new ArrayList<>();
@@ -466,25 +478,69 @@ public class SignController {
 
         try {
             int codigoPostal = Integer.parseInt(codigoPostalTexto);
-            int mobile = Integer.parseInt(mobileTexto);
-            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, mobile, estaActivo
-            );
+            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
 
-            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo, mobile);
-            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
-            Signable a = ClientFactory.getSignable();
-            a.singUp(mensaje);
-            nombreyApellidoField.clear();
-            ciudadField.clear();
-            codigoPostalField.clear();
-            direccionField.clear();
-            emailField.clear();
-            registerPasswordField.clear();
-            confirmPasswordField.clear();
-            showLogin();
-            usernameField.clear();
-            passwordField.clear();
-            //plainTextField.clear();
+            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
+            //condicion para que salga el alert y que confirme si quiere registrarse con un usuario no activo 
+            if (usuario.isEstaActivo()) {
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+
+                // Condicion del Activo
+                Signable a = ClientFactory.getSignable();
+                a.singUp(mensaje);
+                nombreyApellidoField.clear();
+                ciudadField.clear();
+                codigoPostalField.clear();
+                direccionField.clear();
+                emailField.clear();
+
+                if ("Mostrar".equals(revealRegisterButton.getText())) {
+                    registerPasswordField.clear();
+                } else {
+                    plainRegisterTextField.clear();
+                }
+
+                if ("Mostrar".equals(revealConfirmButton.getText())) {
+                    confirmPasswordField.clear();
+                } else {
+                    plainConfirmTextField.clear();
+                }
+
+                showLogin();
+                usernameField.clear();
+                passwordField.clear();
+                // plainTextField.clear();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmar Registro");
+                alert.setHeaderText("¿Estás seguro de que quieres registar con un usuario no Activo?");
+
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        try {
+                            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+
+                            Signable a = ClientFactory.getSignable();
+                            a.singUp(mensaje);
+                            nombreyApellidoField.clear();
+                            ciudadField.clear();
+                            codigoPostalField.clear();
+                            direccionField.clear();
+                            emailField.clear();
+                            registerPasswordField.clear();
+                            confirmPasswordField.clear();
+                            showLogin();
+                            usernameField.clear();
+                            passwordField.clear();
+                            // plainTextField.clear();
+                        } catch (Exception ex) {
+                            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+
+            }
+
         } catch (ErrorMaxClientes e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
@@ -492,6 +548,7 @@ public class SignController {
         } catch (Exception e) {
             errorHandler.handleGeneralException(e, messageLabel);
         }
+
     }
 
     /**
@@ -547,6 +604,27 @@ public class SignController {
      */
     private static void changeTheme(String themeFile, Scene scene) {
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
+        scene
+                .getStylesheets().add(SignController.class
+                        .getResource(themeFile).toExternalForm());
     }
+
+    private void validateField(TextField field) {
+        if (field == emailField) {
+            if (field.getText().isEmpty() || !esCorreoValido(field.getText())) {
+                field.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+            }
+        }
+    }
+
+    private void validateFieldCodigoPostal(TextField codigo) {
+        String codigoPostalTexto = codigoPostalField.getText().trim();
+
+        if (codigo == codigoPostalField) {
+            if (codigo.getText().isEmpty() || !codigoPostalTexto.matches("\\d{5}")) {
+                codigo.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+            }
+        }
+    }
+   
 }

@@ -77,7 +77,7 @@ public class TestSignUp extends ApplicationTest {
         write("Gran Via");
         clickOn("#emailField");
         eraseText(8);
-        write("usuario7@gmail.com");
+        write("usuarioi@gmail.com");
         clickOn("#registerPasswordFieldParent");
         eraseText(4);
         write("12345678Aa");
@@ -115,7 +115,7 @@ public class TestSignUp extends ApplicationTest {
         clickOn("#direccionField");
         write("Gran Via");
         clickOn("#emailField");
-        write("usuario7@gmail.com");
+        write("usuarioi@gmail.com");
         clickOn("#registerPasswordFieldParent");
         write("12345678Aa");
         clickOn("#confirmPasswordFieldParent");
