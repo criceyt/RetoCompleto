@@ -4,6 +4,9 @@ import exceptions.ErrorGeneral;
 import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import java.awt.Color;
+import static java.awt.Color.RED;
+import static java.awt.Color.red;
 import java.io.IOException;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
@@ -34,6 +37,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import libreria.Mensaje;
@@ -53,6 +57,8 @@ public class SignController {
 
     @FXML
     private VBox loginPane;
+    @FXML
+    private Label textEmail;
     @FXML
     private VBox registerPane;
     @FXML
@@ -172,6 +178,47 @@ public class SignController {
         revealButton.setOnAction(this::togglePasswordVisibility);
         revealRegisterButton.setOnAction(this::toggleRegisterPasswordVisibility);
         revealConfirmButton.setOnAction(this::toggleConfirmPasswordVisibility);
+
+        emailField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(emailField);
+            }
+        });
+
+        nombreyApellidoField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(nombreyApellidoField);
+            }
+        });
+
+        ciudadField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(ciudadField);
+            }
+        });
+
+        codigoPostalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(codigoPostalField);
+            }
+        });
+
+        direccionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(direccionField);
+            }
+        });
+
+        registerPasswordField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(registerPasswordField);
+            }
+        });
+        confirmPasswordField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(confirmPasswordField);
+            }
+        });
     }
 
     /**
@@ -361,7 +408,7 @@ public class SignController {
                     stage.setTitle("Ventana Sesion Iniciada");
                     stage.setWidth(900);
                     stage.setHeight(700);
-                    
+
                     stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logo.png")));
                     stage.setScene(scene);
 
@@ -426,6 +473,7 @@ public class SignController {
         if (email.isEmpty()) {
             errores.add("El correo electrónico no puede estar vacío.");
         }
+
         if (password.isEmpty()) {
             errores.add("La contraseña no puede estar vacía.");
         }
@@ -465,20 +513,69 @@ public class SignController {
             errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
 
             Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
-            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
-            Signable a = ClientFactory.getSignable();
-            a.singUp(mensaje);
-            nombreyApellidoField.clear();
-            ciudadField.clear();
-            codigoPostalField.clear();
-            direccionField.clear();
-            emailField.clear();
-            registerPasswordField.clear();
-            confirmPasswordField.clear();
-            showLogin();
-            usernameField.clear();
-            passwordField.clear();
-            plainTextField.clear();
+
+            if (usuario.isEstaActivo()) {
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+
+                // Condicion del Activo
+                Signable a = ClientFactory.getSignable();
+                a.singUp(mensaje);
+                nombreyApellidoField.clear();
+                ciudadField.clear();
+                codigoPostalField.clear();
+                direccionField.clear();
+                emailField.clear();
+                // Hay que hacer que se limpien los campos cuando estan viendose
+                // Este es de PASSWORD
+                if ("Mostrar".equals(revealRegisterButton.getText())) {
+                    registerPasswordField.clear();
+                } else {
+                    plainRegisterTextField.clear();
+                }
+
+                // ESTE ES EL DE CONFIRMAR
+                if ("Mostrar".equals(revealConfirmButton.getText())) {
+                    confirmPasswordField.clear();
+                } else {
+                    plainConfirmTextField.clear();
+                }
+
+                showLogin();
+                usernameField.clear();
+                passwordField.clear();
+                // plainTextField.clear();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmar Registro");
+                alert.setHeaderText("¿Estás seguro de que quieres registar con un usuario no Activo?");
+                alert.setContentText("NO PODRAS INICIAR SESION");
+
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        try {
+                            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+
+                            // Condicion del Activo
+                            Signable a = ClientFactory.getSignable();
+                            a.singUp(mensaje);
+                            nombreyApellidoField.clear();
+                            ciudadField.clear();
+                            codigoPostalField.clear();
+                            direccionField.clear();
+                            emailField.clear();
+                            registerPasswordField.clear();
+                            confirmPasswordField.clear();
+                            showLogin();
+                            usernameField.clear();
+                            passwordField.clear();
+                            // plainTextField.clear();
+                        } catch (Exception ex) {
+                            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+
         } catch (ErrorMaxClientes e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
@@ -496,6 +593,30 @@ public class SignController {
      */
     private boolean esCorreoValido(String email) {
         return email.contains("@") && email.contains(".");
+    }
+
+    private boolean esPostalCorrecto(String codigoPostal) {
+        return codigoPostal.matches("\\d{5}");
+    }
+
+    public boolean validarSoloLetrasNombre(String nombreyApellidos) {
+        // Verifica si la cadena no está vacía y si contiene solo letras
+        return nombreyApellidos.matches("[a-zA-Z]+");
+    }
+
+    public boolean validarSoloLetrasCuidad(String ciudad) {
+        // Verifica si la cadena no está vacía y si contiene solo letras
+        return ciudad.matches("[a-zA-Z]+");
+    }
+
+    public boolean validarSoloLetras(String nombreyApellidos) {
+        // Verifica si la cadena no está vacía y si contiene solo letras
+        return nombreyApellidos.matches("[a-zA-Z]+");
+    }
+    
+    public boolean validarDireccion(String direccion) {
+        // Verifica si la cadena no está vacía y si contiene solo letras
+        return direccion.matches("[a-zA-Z][0-9]");
     }
 
     /**
@@ -541,6 +662,63 @@ public class SignController {
      */
     private static void changeTheme(String themeFile, Scene scene) {
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
+        scene
+                .getStylesheets().add(SignController.class
+                        .getResource(themeFile).toExternalForm());
     }
+
+    private void validateField(TextField field) {
+        if (field == emailField) {
+            if (field.getText().isEmpty() || !esCorreoValido(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        if (field == nombreyApellidoField || !validarSoloLetrasNombre(field.getText())) {
+            if (field.getText().isEmpty()) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        if (field == ciudadField) {
+            if (field.getText().isEmpty() || !validarSoloLetrasCuidad(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+
+        if (field == codigoPostalField) {
+            if (field.getText().isEmpty() || !esPostalCorrecto(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        if (field == direccionField) {
+            if (field.getText().isEmpty() || !esCorreoValido(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        if (field == confirmPasswordField) {
+            if (field.getText().isEmpty() || !esContraseñaFuerte(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        if (field == registerPasswordField) {
+            if (field.getText().isEmpty() || !esContraseñaFuerte(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+
+    }
+
 }
