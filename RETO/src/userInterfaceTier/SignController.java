@@ -4,6 +4,7 @@ import exceptions.ErrorGeneral;
 import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import exceptions.PoolLlenoException;
 import java.io.IOException;
 import libreria.Signable;
 import javafx.animation.TranslateTransition;
@@ -71,6 +72,8 @@ public class SignController {
     private TextField ciudadField;
     @FXML
     private TextField codigoPostalField;
+    @FXML
+    private TextField phoneField;
     @FXML
     private TextField direccionField;
     @FXML
@@ -172,6 +175,49 @@ public class SignController {
         revealButton.setOnAction(this::togglePasswordVisibility);
         revealRegisterButton.setOnAction(this::toggleRegisterPasswordVisibility);
         revealConfirmButton.setOnAction(this::toggleConfirmPasswordVisibility);
+
+        emailField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(emailField);
+            }
+        });
+        
+        nombreyApellidoField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(nombreyApellidoField);
+            }
+        });
+        
+        codigoPostalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(codigoPostalField);
+            }
+        });
+        passwordField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(passwordField);
+            }
+        });
+        
+        confirmPasswordField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(confirmPasswordField);
+            }
+        });
+        
+        ciudadField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(ciudadField);
+            }
+        });
+        
+        direccionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                validateField(direccionField);
+            }
+        });    
+        
+        
     }
 
     /**
@@ -361,7 +407,7 @@ public class SignController {
                     stage.setTitle("Ventana Sesion Iniciada");
                     stage.setWidth(900);
                     stage.setHeight(700);
-                    
+
                     stage.getIcons().add(new Image(getClass().getResourceAsStream("/img/logo.png")));
                     stage.setScene(scene);
 
@@ -380,9 +426,12 @@ public class SignController {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
+        } catch (PoolLlenoException ex) {
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception ex) {
             Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     @FXML
@@ -394,6 +443,7 @@ public class SignController {
         String email = emailField.getText();
         String password = registerPasswordField.getText();
         String confirmPassword = confirmPasswordField.getText();
+        String phoneTexto = phoneField.getText();
         boolean estaActivo = activoCheckBox.isSelected();
 
         List<String> errores = new ArrayList<>();
@@ -462,25 +512,70 @@ public class SignController {
 
         try {
             int codigoPostal = Integer.parseInt(codigoPostalTexto);
-            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, estaActivo);
+            int phone = Integer.parseInt(phoneTexto);
+            errorHandler.validarYRegistrar(nombreyApellidos, ciudad, codigoPostal, direccion, email, password, confirmPassword, phone, estaActivo);
 
-            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, estaActivo);
-            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
-            Signable a = ClientFactory.getSignable();
-            a.singUp(mensaje);
-            nombreyApellidoField.clear();
-            ciudadField.clear();
-            codigoPostalField.clear();
-            direccionField.clear();
-            emailField.clear();
-            registerPasswordField.clear();
-            confirmPasswordField.clear();
-            showLogin();
-            usernameField.clear();
-            passwordField.clear();
-            plainTextField.clear();
+            Usuario usuario = new Usuario(email, password, nombreyApellidos, direccion, ciudad, codigoPostal, phone, estaActivo);
+            if (usuario.isEstaActivo()) {
+                Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+                Signable a = ClientFactory.getSignable();
+                a.singUp(mensaje);
+                nombreyApellidoField.clear();
+                ciudadField.clear();
+                codigoPostalField.clear();
+                direccionField.clear();
+                emailField.clear();
+                registerPasswordField.clear();
+                confirmPasswordField.clear();
+                showLogin();
+                usernameField.clear();
+                passwordField.clear();
+
+            } else {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Registro no activo");
+                alert.setHeaderText("¿Estas seguro?");
+                alert.setContentText("CUIDADO, con un usuario que no esta activo NO PODRAS INICIAR SESION");
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        try {
+                            Mensaje mensaje = new Mensaje(usuario, Request.SIGN_UP_REQUEST);
+
+                            // Condicion del Activo
+                            Signable a = ClientFactory.getSignable();
+                            a.singUp(mensaje);
+                            nombreyApellidoField.clear();
+                            ciudadField.clear();
+                            codigoPostalField.clear();
+                            direccionField.clear();
+                            emailField.clear();
+                            if ("Mostrar".equals(revealRegisterButton.getText())) {
+                                registerPasswordField.clear();
+                            } else {
+                                plainRegisterTextField.clear();
+                            }
+
+                            // ESTE ES EL DE CONFIRMAR
+                            if ("Mostrar".equals(revealConfirmButton.getText())) {
+                                confirmPasswordField.clear();
+                            } else {
+                                plainConfirmTextField.clear();
+                            }
+                            showLogin();
+                            usernameField.clear();
+                            passwordField.clear();
+                            // plainTextField.clear();
+                        } catch (Exception ex) {
+                            Logger.getLogger(SignController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+            //plainTextField.clear();
         } catch (ErrorMaxClientes e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
+        } catch (PoolLlenoException ex) {
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (ErrorGeneral ex) {
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         } catch (Exception e) {
@@ -543,4 +638,69 @@ public class SignController {
         scene.getStylesheets().clear();
         scene.getStylesheets().add(SignController.class.getResource(themeFile).toExternalForm());
     }
+
+    private void validateField(TextField field) {
+        if (field == emailField) {
+            if (field.getText().isEmpty() || !esCorreoValido(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+    
+        
+        if (field == nombreyApellidoField) {
+            if (field.getText().isEmpty()) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        if (field == codigoPostalField) {
+            if (field.getText().isEmpty() || codigoPostalField.getText().matches("\\d{5}")) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        if (field == passwordField) {
+            if (field.getText().isEmpty() || !esContraseñaFuerte(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        if (field == confirmPasswordField) {
+            if (field.getText().isEmpty() || !esContraseñaFuerte(field.getText())) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        if (field == ciudadField) {
+            if (field.getText().isEmpty()) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        if (field == direccionField) {
+            if (field.getText().isEmpty()) {
+                field.setStyle("-fx-border-color: red;");
+            } else {
+                field.setStyle("-fx-border-color: transparent;");
+            }
+        }
+        
+        
+        
+        
+        
+    }
+
 }

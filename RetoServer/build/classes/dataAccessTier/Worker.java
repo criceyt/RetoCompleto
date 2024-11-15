@@ -5,6 +5,7 @@ import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import exceptions.PoolLlenoException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -81,6 +82,9 @@ public class Worker implements Runnable {
                     // Manejar errores generales
                     Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
                     mensaje.setRq(Request.ERROR_GENERAL);  // Error genérico
+                } catch (PoolLlenoException ex) {
+                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje.setRq(Request.ERROR_MAX_CON);
                 }
             } else {
                 // Si la solicitud es un inicio de sesión (signIn)
@@ -98,6 +102,9 @@ public class Worker implements Runnable {
                     // Error general al procesar la solicitud
                     Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
                     mensaje.setRq(Request.ERROR_GENERAL);  // Error genérico
+                } catch (PoolLlenoException ex) {
+                    Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+                    mensaje.setRq(Request.ERROR_MAX_CON);
                 }
             }
 

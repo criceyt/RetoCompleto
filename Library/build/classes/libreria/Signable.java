@@ -5,6 +5,7 @@ import exceptions.ErrorGeneral;
 import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import exceptions.PoolLlenoException;
 
 /**
  * Interfaz que define los métodos necesarios para la gestión de usuarios en el
@@ -38,7 +39,7 @@ public interface Signable {
      * @throws ErrorMaxClientes Si se alcanza el límite máximo de clientes
      * permitidos en el sistema.
      */
-    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes;
+    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes, PoolLlenoException;
 
     /**
      * Método para iniciar sesión con un usuario existente en el sistema.
@@ -58,5 +59,5 @@ public interface Signable {
      * @throws ErrorMaxClientes Si se alcanza el límite máximo de clientes
      * permitidos en el sistema.
      */
-    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes;
+    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes, PoolLlenoException;
 }

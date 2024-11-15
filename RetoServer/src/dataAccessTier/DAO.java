@@ -4,6 +4,7 @@ import exceptions.ErrorCorreoExistente;
 import exceptions.ErrorGeneral;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import exceptions.PoolLlenoException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +28,7 @@ public class DAO implements Signable {
 
     private static final Logger LOGGER = Logger.getLogger(AplicattionServer.class.getName());
 
-    private PoolConexiones pool; // Pool de conexiones a la base de datos
+    private PoolExamen pool; // Pool de conexiones a la base de datos
 
     // Variables para la conexión y las consultas SQL
     private Connection con;
@@ -39,7 +40,7 @@ public class DAO implements Signable {
     private String pass;
 
     // Consultas SQL
-    private final String altaParner = "INSERT INTO res_partner (company_id, name, email, street, city, zip) VALUES (1, ?, ?, ?, ?, ?)";
+    private final String altaParner = "INSERT INTO res_partner (company_id, name, email, street, city, zip, mobile) VALUES (1, ?, ?, ?, ?, ?, ?)";
     private final String altaUsers = "INSERT INTO res_users (company_id, partner_id, login, password, active, notification_type) VALUES (1, ?, ?, ?, ?, 'email')";
     private final String selectParnerId = "SELECT id FROM res_partner order by id desc limit 1";
     private final String comprobarEmail = "SELECT email FROM res_partner WHERE email=?";
@@ -54,7 +55,7 @@ public class DAO implements Signable {
      * de datos.
      */
     public DAO() throws SQLException {
-        this.pool = new PoolConexiones(); // Crear un nuevo pool de conexiones
+        this.pool = new PoolExamen(); // Crear un nuevo pool de conexiones
     }
 
     /**
@@ -93,7 +94,7 @@ public class DAO implements Signable {
      * datos.
      */
     @Override
-    public synchronized Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente {
+    public synchronized Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, PoolLlenoException {
         String email = mensaje.getUser().getEmail();
         String password = mensaje.getUser().getPassword();
         ResultSet rs = null;
@@ -141,7 +142,7 @@ public class DAO implements Signable {
      * @throws ErrorGeneral Si ocurre un error general durante la operación.
      */
     @Override
-    public synchronized Usuario singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral {
+    public synchronized Usuario singUp(Mensaje mensaje) throws ErrorCorreoExistente, ErrorGeneral, PoolLlenoException {
         try {
             con = pool.getConnection(); // Obtener una conexión del pool
             stmt = con.prepareStatement(comprobarEmail);
@@ -158,6 +159,7 @@ public class DAO implements Signable {
                 stmt.setString(3, mensaje.getUser().getDireccion());
                 stmt.setString(4, mensaje.getUser().getCiudad());
                 stmt.setInt(5, mensaje.getUser().getCodigoPostal());
+                stmt.setInt(6, mensaje.getUser().getPhone());
                 stmt.executeUpdate();
 
                 stmt = con.prepareStatement(selectParnerId); // Preparar la consulta para obtener el ID del nuevo "partner"

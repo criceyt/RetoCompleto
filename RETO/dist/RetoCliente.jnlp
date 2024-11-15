@@ -8,8 +8,8 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="RetoCliente.jar" size="1698877" download="eager" />
-    <jar href="lib\Library.jar" size="26583" download="eager" />
+    <jar href="RetoCliente.jar" size="1701248" download="eager" />
+    <jar href="lib\Library.jar" size="28723" download="eager" />
     <jar href="lib\hamcrest-junit-2.0.0.0.jar" size="14347" download="eager" />
     <jar href="lib\java-hamcrest-2.0.0.0.jar" size="112929" download="eager" />
     <jar href="lib\junit-4.12.jar" size="316791" download="eager" />

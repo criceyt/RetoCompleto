@@ -5,6 +5,7 @@ import exceptions.ErrorGeneral;
 import exceptions.ErrorMaxClientes;
 import exceptions.ErrorUsuarioInexistente;
 import exceptions.ErrorUsuarioNoActivo;
+import exceptions.PoolLlenoException;
 import libreria.Signable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -52,7 +53,7 @@ public class Client implements Signable {
      * permitidos.
      */
     @Override
-    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes {
+    public Usuario singUp(Mensaje mensaje) throws ErrorGeneral, ErrorCorreoExistente, ErrorMaxClientes, PoolLlenoException {
 
         try {
             // cargar puerto
@@ -80,6 +81,8 @@ public class Client implements Signable {
                     throw new ErrorCorreoExistente();
                 case ERROR_MAX_CLIENTES:
                     throw new ErrorMaxClientes();
+                case ERROR_MAX_CON:
+                    throw new PoolLlenoException();
             }
 
         } catch (NumberFormatException e) {
@@ -112,7 +115,7 @@ public class Client implements Signable {
      * permitidos.
      */
     @Override
-    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes {
+    public Usuario signIn(Mensaje mensaje) throws ErrorGeneral, ErrorUsuarioNoActivo, ErrorUsuarioInexistente, ErrorMaxClientes, PoolLlenoException {
 
         try {
             // cargar puerto
@@ -148,6 +151,8 @@ public class Client implements Signable {
                     throw new ErrorUsuarioInexistente();
                 case ERROR_MAX_CLIENTES:
                     throw new ErrorMaxClientes();
+                case ERROR_MAX_CON: 
+                    throw new PoolLlenoException();
 
             }
 

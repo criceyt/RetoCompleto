@@ -37,17 +37,47 @@
             <!-- Panel de registro -->
             <VBox fx:id="registerPane" alignment="CENTER" styleClass="register-pane" visible="false" HBox.hgrow="ALWAYS">
                 <Text styleClass="text-title" text="Regístrate" />
-                <Label text="Nombre y Apellidos" styleClass="label" />
-                <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" styleClass="text-field" />
+                
+                <Label text="Nombre y Apellidos" styleClass="label" />            
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                    <TextField fx:id="nombreyApellidoField" promptText="Nombre y Apellidos" styleClass="text-field" />
+                </HBox> 
+                                             
                 <Label text="Ciudad" styleClass="label" />
-                <TextField fx:id="ciudadField" promptText="Ciudad" styleClass="text-field" />
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                    <TextField fx:id="ciudadField" promptText="Ciudad" styleClass="text-field" />
+                </HBox>
+                
                 <Label text="Código Postal" styleClass="label" />
-                <TextField fx:id="codigoPostalField" promptText="Código Postal" styleClass="text-field" />
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                    <TextField fx:id="codigoPostalField" promptText="Código Postal" styleClass="text-field" />
+                </HBox>
+                
+                <Label text="Telefono" styleClass="label" />
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                     <TextField fx:id="phoneField" promptText="Telefono" styleClass="text-field" />
+                </HBox>
+               
                 <Label text="Dirección" styleClass="label" />
-                <TextField fx:id="direccionField" promptText="Dirección" styleClass="text-field" />
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                    <TextField fx:id="direccionField" promptText="Dirección" styleClass="text-field" />
+                </HBox>
+                
+                
                 <Label text="Correo Electrónico" styleClass="label" />
-                <TextField fx:id="emailField" promptText="Correo Electrónico" styleClass="text-field" />
+                <HBox alignment="CENTER">
+                    <Label text="*" styleClass="asterisk-label"/>
+                    <TextField fx:id="emailField" promptText="Correo Electrónico" styleClass="text-field" />
+                </HBox>
+              
+                
                 <Label text="Contraseña" styleClass="label" />
+                
                 <HBox fx:id="registerPasswordFieldParent" alignment="CENTER">
                     <PasswordField fx:id="registerPasswordField" promptText="Contraseña" styleClass="password-field" />
                     <Button fx:id="revealRegisterButton" text="Mostrar" styleClass="button" />

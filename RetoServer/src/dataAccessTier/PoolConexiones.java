@@ -24,7 +24,7 @@ import java.util.Stack;
  * @author oier
  */
 public class PoolConexiones {
-
+    
     // Atributos necesarios para gestionar la conexión a la base de datos
     private ResourceBundle fichConf;
     private String databaseUrl;
@@ -32,6 +32,7 @@ public class PoolConexiones {
     private String password;
     private int maxPoolSize = 10;
     private int connNum = 0;
+    
 
     // Consulta para verificar si la conexión está activa
     private static final String SQL_VERIFYCONN = "select 1";

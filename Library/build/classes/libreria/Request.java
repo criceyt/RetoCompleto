@@ -27,5 +27,7 @@ public enum Request {
     // Error: El correo del usuario ya está registrado 
     ERROR_USUARIO_YA_EXISTE,
     // Error: Se ha alcanzado el número máximo de clientes conectados 
-    ERROR_MAX_CLIENTES
+    ERROR_MAX_CLIENTES,
+    ERROR_MAX_CON
+    
 }

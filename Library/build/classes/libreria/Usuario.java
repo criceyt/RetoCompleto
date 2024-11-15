@@ -15,6 +15,7 @@ public class Usuario implements Serializable {
     private String direccion;   // Dirección del usuario
     private String ciudad;      // Ciudad del usuario
     private int codigoPostal;   // Código postal del usuario
+    private int phone;
     private boolean estaActivo; // Estado de actividad del usuario (activo o no)
 
     /**
@@ -31,7 +32,7 @@ public class Usuario implements Serializable {
      * @param codigoPostal El código postal de la dirección del usuario.
      * @param estaActivo El estado de actividad del usuario (activo o no).
      */
-    public Usuario(String email, String password, String nombreyApellidos, String direccion, String ciudad, int codigoPostal, boolean estaActivo) {
+    public Usuario(String email, String password, String nombreyApellidos, String direccion, String ciudad, int codigoPostal, int phone, boolean estaActivo) {
         this.email = email;
         this.password = password;
         this.nombreyApellidos = nombreyApellidos;
@@ -39,6 +40,7 @@ public class Usuario implements Serializable {
         this.ciudad = ciudad;
         this.codigoPostal = codigoPostal;
         this.estaActivo = estaActivo;
+        this.phone = phone;
     }
 
     /**
@@ -178,6 +180,14 @@ public class Usuario implements Serializable {
      *
      * @return `true` si el usuario está activo, `false` si no lo está.
      */
+    public int getPhone(){
+        return phone;  
+    }
+    
+    public void setPhone(int phone){
+        this.phone = phone;
+    }
+    
     public boolean isEstaActivo() {
         return estaActivo;
     }
